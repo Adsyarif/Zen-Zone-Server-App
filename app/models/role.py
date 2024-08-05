@@ -6,14 +6,14 @@ from sqlalchemy import Integer, String
 class Role(Base):
     __tablename__ = "role"
 
-    gender_id = mapped_column(Integer, primary_key=True, autoincrement=True)
+    role_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255), nullable=False)
 
     def serialize(self):
         return {
-            'gender_id': self.gender_id,
+            'role_id': self.gender_id,
             'name': self.name
         }
 
     def __repr__(self):
-        return f'<Gender{self.id} - {self.name}>'
+        return f'<ROle{self.role_id} - {self.name}>'

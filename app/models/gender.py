@@ -16,4 +16,4 @@ class Gender(Base):
         }
 
     def __repr__(self):
-        return f'<Gender{self.id} - {self.name}>'
+        return f'<Gender{self.gender_id} - {self.name}>'

@@ -37,4 +37,4 @@ class UserDetails(Base):
         }
 
     def __repr__(self):
-        return f'<account{self.id} - {self.email}>'
+        return f'<UserDetails{self.user_id}>'
