@@ -12,8 +12,7 @@ DATABASE_PASSWORD = os.getenv('PASSWORD')
 print('Connecting to SQL Server')
 
 
-connection_string = f'{DATABASE_TYPE}://{DATABASE_USER}:{DATABASE_PASSWORD}@{
-    DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
+connection_string = f'{DATABASE_TYPE}://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_NAME}'
 
 engine = create_engine(connection_string)
 
