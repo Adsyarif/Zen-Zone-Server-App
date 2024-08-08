@@ -1,4 +1,4 @@
-from app.models import Base
+from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 import bcrypt
@@ -12,27 +12,24 @@ class Account(Base):
     role_id = mapped_column(Integer, ForeignKey('role.role_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    role_id = relationship("Role", back_populates="account")
+    role = relationship("Role", back_populates="account")
+    user_details = relationship("UserDetails", back_populates="account")
 
     def serialize(self, full=True):
+        data = {
+            'account_id': self.account_id,
+            'email': self.email,
+            'password': self.password,
+            'role_id': self.role_id
+        }
         if full:
-            return{
-                'account_id': self.account_id,
-                'email': self.email,
-                'password': self.password,
-                'role_id': self.role_id
-            }
-        else:
-            return {
-                'account_id': self.account_id,
-                'email': self.email,
-                'password': self.password,
+            data.update({
                 'created_at': self.created_at,
-                'role_id': self.role_id,
-            }
+            })
+        return data
 
     def __repr__(self):
-        return f'<Account{self.account_id} - {self.email}>'
+        return f'<Account {self.account_id} - {self.email}>'
 
     def create_password(self, password):
         self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
