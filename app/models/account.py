@@ -9,9 +9,9 @@ class Account(Base):
     account_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     email = mapped_column(String(255), nullable=False, unique=True)
     password = mapped_column(String(255), nullable=False)
-    created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     role_id = mapped_column(Integer, ForeignKey('role.role_id', ondelete="CASCADE"))
-
+    created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
+    
     role_id = relationship("Role", back_populates="account")
 
     def serialize(self, full=True):
