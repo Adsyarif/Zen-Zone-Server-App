@@ -1,6 +1,6 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import String, Integer, func
+from sqlalchemy import String, Integer
 
 class Mood_category(Base):
     __tablename__ = "mood_category"

@@ -12,25 +12,21 @@ class Account(Base):
     role_id = mapped_column(Integer, ForeignKey('role.role_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    role = relationship("Role", back_populates="account")
+    role = relationship("Role", back_populates="account", lazy='joined')
     diary = relationship("Diary", back_populates="account")
-    user_details = relationship("User_details", back_populates="account")
+    user_details = relationship("User_details", back_populates="account", lazy='joined')
 
     def serialize(self, full=True):
+        data = {
+            'account_id': self.account_id,
+            'email': self.email,
+            'password': self.password,
+            'role_id': self.role.serialize() if self.role else None
+        }
         if full:
-            return {
-                'account_id': self.account_id,
-                'email': self.email,
-                'password': self.password,
-                'role_id': self.role_id
-            }
-        else:
-            return {
-                'account_id': self.account_id,
-                'email': self.email,
-                'password': self.password,
-                'created_at': self.created_at,
-            }
+            data.update ({
+                'created_at': self.created_at
+            })
         return data
 
     def __repr__(self):

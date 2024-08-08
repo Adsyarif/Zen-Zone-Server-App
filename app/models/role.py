@@ -8,7 +8,7 @@ class Role(Base):
     role_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255), nullable=False)
 
-    account = relationship("Account", back_populates="role")
+    account = relationship("Account", back_populates="role", lazy='joined')
 
     def serialize(self):
         return {

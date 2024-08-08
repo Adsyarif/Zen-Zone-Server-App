@@ -1,5 +1,4 @@
 from app.models.base import Base
-from app.models.gender import Gender 
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func
 
@@ -17,8 +16,14 @@ class User_details(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    gender = relationship("Gender", back_populates="user_details")    
-    account = relationship("Account", back_populates="user_details")
+    gender = relationship("Gender", back_populates="user_details", lazy='joined')    
+    account = relationship("Account", back_populates="user_details", lazy='joined')
+    posts = relationship("Posts", back_populates="user_details")
+    like = relationship("Like", back_populates="user_details")
+    bookmarks = relationship("Bookmarks", back_populates="user_details")
+    comments = relationship("Comments", back_populates="user_details")
+    report_post = relationship("Report_post", back_populates="user_details")
+    report_comment = relationship("Report_comment", back_populates="user_details")
 
     def serialize(self, full=True):
         data = {
@@ -28,7 +33,7 @@ class User_details(Base):
             'last_name': self.last_name,
             'user_name': self.user_name,
             'phone_number': self.phone_number,
-            'gender_id': self.gender_id
+            'gender_id': self.gender.serialize() if self.gender else None
         }
         if full:
             data.update({
