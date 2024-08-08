@@ -13,19 +13,24 @@ class Account(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
     role = relationship("Role", back_populates="account")
-    user_details = relationship("UserDetails", back_populates="account")
+    diary = relationship("Diary", back_populates="account")
+    user_details = relationship("User_details", back_populates="account")
 
     def serialize(self, full=True):
-        data = {
-            'account_id': self.account_id,
-            'email': self.email,
-            'password': self.password,
-            'role_id': self.role_id
-        }
         if full:
-            data.update({
+            return {
+                'account_id': self.account_id,
+                'email': self.email,
+                'password': self.password,
+                'role_id': self.role_id
+            }
+        else:
+            return {
+                'account_id': self.account_id,
+                'email': self.email,
+                'password': self.password,
                 'created_at': self.created_at,
-            })
+            }
         return data
 
     def __repr__(self):

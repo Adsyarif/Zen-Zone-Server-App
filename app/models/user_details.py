@@ -3,7 +3,7 @@ from app.models.gender import Gender
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func
 
-class UserDetails(Base):
+class User_details(Base):
     __tablename__ = "user_details"
 
     user_id = mapped_column(Integer, primary_key=True, autoincrement=True)

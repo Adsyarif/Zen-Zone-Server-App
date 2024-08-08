@@ -1,7 +1,6 @@
-from app.models.base import Base
+from app.models import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String
-
 
 class Role(Base):
     __tablename__ = "role"
@@ -10,7 +9,6 @@ class Role(Base):
     name = mapped_column(String(255), nullable=False)
 
     account = relationship("Account", back_populates="role")
-
 
     def serialize(self):
         return {

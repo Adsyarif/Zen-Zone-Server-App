@@ -15,9 +15,9 @@ class Mood_status(Base):
     def serialize(self):
         return {
             'status_id': self.status_id,
-            'mood_category_id': self.mood_category_id,
+            'mood_category_id': self.mood_category.serialize() if self.mood_category else None,
             'value': self.value
         }
 
     def __repr__(self):
-        return f'<MoodCategory{self.id}>'
+        return f'<MoodCategory{self.status_id}>'
