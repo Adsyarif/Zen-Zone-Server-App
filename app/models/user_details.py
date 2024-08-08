@@ -12,13 +12,13 @@ class UserDetails(Base):
     last_name = mapped_column(String(255), nullable=False)
     user_name = mapped_column(String(255), nullable=False, unique=True)
     phone_number = mapped_column(String(255), nullable=False, unique=True)
-    profile_image = mapped_column(String(255), nullable=True)  # Ubah nullable=True jika profile_image tidak wajib
+    profile_image = mapped_column(String(255), nullable=True) 
     gender_id = mapped_column(Integer, ForeignKey('gender.gender_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    gender = relationship("Gender", back_populates="user_details", lazy='joined')    
-    account = relationship("Account", back_populates="user_details", lazy='joined')
+    gender = relationship("Gender", back_populates="user_details")    
+    account = relationship("Account", back_populates="user_details")
 
     def serialize(self, full=True):
         data = {
