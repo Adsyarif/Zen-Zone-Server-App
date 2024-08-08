@@ -1,6 +1,6 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy import Integer, ForeignKey
 
 class Mood_tracker(Base):
     __tablename__ = "mood_tracker"
