@@ -1,5 +1,5 @@
 from app.models import Base
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String
 
 class Gender(Base):
@@ -7,6 +7,8 @@ class Gender(Base):
 
     gender_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255), nullable=False)
+
+    user_details = relationship("User_details", back_populates="gender")
 
     def serialize(self):
         return {
