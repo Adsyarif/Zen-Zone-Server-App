@@ -2,7 +2,7 @@ from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, ForeignKey, DateTime, func
 
-class Report_comment(Base):
+class ReportComment(Base):
     __tablename__ = "report_comment"
 
     report_comment_id = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -13,8 +13,9 @@ class Report_comment(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
   
     comments = relationship("Comments", back_populates="report_comment")
-    user_details = relationship("User_details", back_populates="report_comment")
-    report_category = relationship("Report_category", back_populates="report_comment")
+    user_details = relationship("UserDetails", back_populates="report_comment")
+    report_category = relationship("ReportCategory", back_populates="report_comment")
+
 
 
     def serialize(self, full=True):

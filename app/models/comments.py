@@ -10,10 +10,12 @@ class Comments(Base):
     user_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
     content = mapped_column(String)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
-    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now(), ondelete=func.now())
+    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    user_details = relationship("User_details", back_populates="comments")
+    user_details = relationship("UserDetails", back_populates="comments")
     posts = relationship("Posts", back_populates="comments")
+    report_comment = relationship("ReportComment", back_populates="comments")
+
 
     def serialize(self, full=True):
         data = {

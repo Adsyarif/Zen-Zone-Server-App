@@ -9,13 +9,14 @@ class Posts(Base):
     user_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
     content = mapped_column(String)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
-    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now(), ondelete=func.now())
+    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user_details = relationship("User_details", back_populates="posts")
+    user_details = relationship("UserDetails", back_populates="posts")
     bookmarks = relationship("Bookmarks", back_populates="posts")
     like = relationship("Like", back_populates="posts")
     comments = relationship("Comments", back_populates="posts")
-    report_post = relationship("Report_post", back_populates="posts")
+    report_post = relationship("ReportPost", back_populates="posts")
+
 
     def serialize(self, full=True):
         data = {

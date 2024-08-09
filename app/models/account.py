@@ -12,9 +12,10 @@ class Account(Base):
     role_id = mapped_column(Integer, ForeignKey('role.role_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    role = relationship("Role", back_populates="account", lazy='joined')
+    role = relationship("Role", back_populates="account")
     diary = relationship("Diary", back_populates="account")
-    user_details = relationship("User_details", back_populates="account", lazy='joined')
+    user_details = relationship("UserDetails", back_populates="account")
+
 
     def serialize(self, full=True):
         data = {

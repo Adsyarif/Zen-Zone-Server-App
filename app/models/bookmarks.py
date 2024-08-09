@@ -10,7 +10,8 @@ class Bookmarks(Base):
     user_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    user_details = relationship("User_details", back_populates="bookmarks")
+
+    user_details = relationship("UserDetails", back_populates="bookmarks")
     posts = relationship("Posts", back_populates="bookmarks")
 
     def serialize(self, full=True):

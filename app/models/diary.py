@@ -11,11 +11,12 @@ class Diary(Base):
     content = mapped_column(String)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now(), ondelete=func.now())
+    deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     account = relationship("Account", back_populates="diary")
-    mood_status = relationship("Mood_status", back_populates="diary")
-    mood_tracker = relationship("Mood_tracker", back_populates="diary")
+    mood_status = relationship("MoodStatus", back_populates="diary")
+    mood_tracker = relationship("MoodTracker", back_populates="diary")
+
 
     def serialize(self, full=True):
         data = {

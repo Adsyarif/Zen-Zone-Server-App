@@ -2,13 +2,13 @@ from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import String, Integer
 
-class Mood_category(Base):
+class MoodCategory(Base):
     __tablename__ = "mood_category"
 
     mood_category_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255))
 
-    mood_status = relationship("Mood_status", back_populates="mood_category")
+    mood_status = relationship("MoodStatus", back_populates="mood_category")
 
     def serialize(self):
         return {
