@@ -16,14 +16,14 @@ class User_details(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    gender = relationship("Gender", back_populates="user_details", lazy='joined')    
-    account = relationship("Account", back_populates="user_details", lazy='joined')
+    gender = relationship("Gender", back_populates="user_details" )    
+    account = relationship("Account", back_populates="user_details")
     posts = relationship("Posts", back_populates="user_details")
     like = relationship("Like", back_populates="user_details")
     bookmarks = relationship("Bookmarks", back_populates="user_details")
     comments = relationship("Comments", back_populates="user_details")
-    report_post = relationship("Report_post", back_populates="user_details")
-    report_comment = relationship("Report_comment", back_populates="user_details")
+    report_post = relationship("ReportPost", back_populates="user_details")
+    report_comment = relationship("ReportComment", back_populates="user_details")
 
     def serialize(self, full=True):
         data = {
