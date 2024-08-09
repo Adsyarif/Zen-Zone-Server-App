@@ -11,37 +11,36 @@ class UserDetails(Base):
     last_name = mapped_column(String(255), nullable=False)
     user_name = mapped_column(String(255), nullable=False, unique=True)
     phone_number = mapped_column(String(255), nullable=False, unique=True)
-    profile_image = mapped_column(String(255), nullable=False) # Termporal profile image
+    profile_image = mapped_column(String(255), nullable=True) 
     gender_id = mapped_column(Integer, ForeignKey('gender.gender_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    gender_id = relationship("Gender", back_populates="user_details")    
-    account_id = relationship("Account", back_populates="user_details")
+    gender = relationship("Gender", back_populates="user_details" )    
+    account = relationship("Account", back_populates="user_details")
+    posts = relationship("Posts", back_populates="user_details")
+    like = relationship("Like", back_populates="user_details")
+    bookmarks = relationship("Bookmarks", back_populates="user_details")
+    comments = relationship("Comments", back_populates="user_details")
+    report_post = relationship("ReportPost", back_populates="user_details")
+    report_comment = relationship("ReportComment", back_populates="user_details")
 
     def serialize(self, full=True):
+        data = {
+            'user_id': self.user_id,
+            'account_id': self.account_id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'user_name': self.user_name,
+            'phone_number': self.phone_number,
+            'gender_id': self.gender_id
+        }
         if full:
-            return {
-                'user_id': self.user_id,
-                'account_id': self.account_id,
-                'first_name': self.first_name,
-                'last_name': self.last_name,
-                'user_name': self.user_name,
-                'phone_number': self.phone_number,
-                'gender_id': self.gender_id
-            }
-        else: 
-            return {
-                'user_id': self.user_id,
-                'account_id': self.account_id,
-                'first_name': self.first_name,
-                'last_name': self.last_name,
-                'user_name': self.user_name,
-                'phone_number': self.phone_number,
+            data.update({
                 'created_at': self.created_at,
                 'updated_at': self.updated_at,
-                'gender_id': self.gender_id
-            }
+            })
+        return data
 
     def __repr__(self):
-        return f'<UserDetails{self.user_id}>'
+        return f'<UserDetails {self.user_id}>'

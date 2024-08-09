@@ -1,7 +1,6 @@
 from app.models.base import Base
-from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String
-
 
 class Role(Base):
     __tablename__ = "role"
@@ -9,11 +8,13 @@ class Role(Base):
     role_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255), nullable=False)
 
+    account = relationship("Account", back_populates="role")
+
     def serialize(self):
         return {
-            'role_id': self.gender_id,
+            'role_id': self.role_id,
             'name': self.name
         }
 
     def __repr__(self):
-        return f'<ROle{self.role_id} - {self.name}>'
+        return f'<Role{self.role_id} - {self.name}>'
