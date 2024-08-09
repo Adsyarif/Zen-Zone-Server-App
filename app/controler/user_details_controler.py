@@ -127,7 +127,7 @@ def create_user_details(account_id):
         session.commit()
 
         return api_response(
-            status_code=201,
+            status_code=200,
             message="UserDetails created successfully",
             data=new_user_details.serialize(full=False)
         )
