@@ -17,6 +17,7 @@ class Posts(Base):
     comments = relationship("Comments", back_populates="posts")
     report_post = relationship("ReportPost", back_populates="posts")
 
+
     def serialize(self, full=True):
         data = {
             'post_id': self.post_id,

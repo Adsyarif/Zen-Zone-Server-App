@@ -11,6 +11,7 @@ class ReportCategory(Base):
     report_post = relationship("ReportPost", back_populates="report_category")
     report_comment = relationship("ReportComment", back_populates="report_category")
 
+
     def serialize(self):
         return {
             'report_category_id': self.report_category_id,

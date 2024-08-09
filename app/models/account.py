@@ -16,6 +16,7 @@ class Account(Base):
     diary = relationship("Diary", back_populates="account")
     user_details = relationship("UserDetails", back_populates="account")
 
+
     def serialize(self, full=True):
         data = {
             'account_id': self.account_id,

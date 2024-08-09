@@ -10,6 +10,8 @@ class Gender(Base):
 
     user_details = relationship("UserDetails", back_populates="gender")
 
+
+
     def serialize(self):
         return {
             'gender_id': self.gender_id,

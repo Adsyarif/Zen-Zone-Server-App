@@ -18,6 +18,7 @@ from app.routes.mood_status_route import mood_status_routes
 from app.routes.mood_tracker_route import mood_tracker_routes
 from app.routes.like_route import like_routes
 
+
 load_dotenv()
 
 app = Flask(__name__)

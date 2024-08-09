@@ -17,6 +17,7 @@ class Diary(Base):
     mood_status = relationship("MoodStatus", back_populates="diary")
     mood_tracker = relationship("MoodTracker", back_populates="diary")
 
+
     def serialize(self, full=True):
         data = {
             'diary_id': self.diary_id,

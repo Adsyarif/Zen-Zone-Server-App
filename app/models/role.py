@@ -10,6 +10,7 @@ class Role(Base):
 
     account = relationship("Account", back_populates="role")
 
+
     def serialize(self):
         return {
             'role_id': self.role_id,

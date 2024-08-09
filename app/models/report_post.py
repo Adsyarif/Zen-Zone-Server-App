@@ -13,8 +13,10 @@ class ReportPost(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
   
     posts = relationship("Posts", back_populates="report_post")
+
     user_details = relationship("UserDetails", back_populates="report_post")
     report_category = relationship("ReportCategory", back_populates="report_post")
+
 
     def serialize(self, full=True):
         data = {
