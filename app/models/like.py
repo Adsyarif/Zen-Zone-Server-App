@@ -10,7 +10,7 @@ class Like(Base):
     user_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     
-    user_details = relationship("User_details", back_populates="like")
+    user_details = relationship("UserDetails", back_populates="like")
     posts = relationship("Posts", back_populates="like")
 
     def serialize(self, full=True):

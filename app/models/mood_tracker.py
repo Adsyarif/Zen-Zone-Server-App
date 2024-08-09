@@ -2,7 +2,7 @@ from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, ForeignKey
 
-class Mood_tracker(Base):
+class MoodTracker(Base):
     __tablename__ = "mood_tracker"
 
     mood_tracker_id = mapped_column(Integer, primary_key=True, autoincrement=True)
