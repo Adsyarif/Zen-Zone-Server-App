@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 from app.models.base import Base
-from sqlalchemy.orm import mapped_column
-=======
-from app.models import Base
-from sqlalchemy.orm import mapped_column, relationship
->>>>>>> 97ca751b837b8574e73705fab36ea04bc850ee8e
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String
 
