@@ -19,6 +19,7 @@ def create_account():
     session = Session()
     existing_account = session.query(Account).filter(Account.email == email).first()
     if existing_account:
+        session.close()
         return jsonify(f"Email'{email}' already exists. create with another data")
     
     new_account = Account(
@@ -28,13 +29,17 @@ def create_account():
     )
     new_account.create_password(password)
 
-    session.begin()
     try:
         session.add(new_account)
         session.commit()
+        session.refresh(new_account)
     except Exception as e:
         session.rollback()
-        return api_response(status_code = 500, message = f"create account failed: {e}", data = {})
+        return api_response(
+            status_code = 500, 
+            message = f"create account failed: {e}", 
+            data = {}
+        )
     finally:
         session.close()
     return api_response(
@@ -74,7 +79,7 @@ def login_account():
         return api_response(
             status_code = 200,
             message = "Login success",
-            data = {"account": account.serialize(full = True), "access_token": access_token}
+            data = {"account": account.serialize(), "access_token": access_token}
         )
     except Exception as e:
         session.rollback()

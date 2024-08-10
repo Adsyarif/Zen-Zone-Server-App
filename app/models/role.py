@@ -6,7 +6,7 @@ class Role(Base):
     __tablename__ = "role"
 
     role_id = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name = mapped_column(String(255), nullable=False)
+    value = mapped_column(String(255), nullable=False)
 
     account = relationship("Account", back_populates="role")
 
@@ -14,8 +14,8 @@ class Role(Base):
     def serialize(self):
         return {
             'role_id': self.role_id,
-            'name': self.name
+            'value': self.value
         }
 
     def __repr__(self):
-        return f'<Role{self.role_id} - {self.name}>'
+        return f'<Role{self.role_id} - {self.value}>'
