@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr, field_validator
-
 class CreateAccount(BaseModel):
     email: EmailStr
     password: str
@@ -10,7 +9,7 @@ class CreateAccount(BaseModel):
         if not v:
             raise ValueError('Email must be provided')
         return v
-    
+
     @field_validator('email')
     def email_complexity_check(cls, v):
         if len(v) < 12:
@@ -60,4 +59,3 @@ class LoginAccount(BaseModel):
         if not v:
             raise ValueError('Password must be provided')
         return v
-    

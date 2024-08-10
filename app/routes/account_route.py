@@ -1,5 +1,4 @@
 from flask import Blueprint
-
 from app.controler.account_controler import (
     get_all_accounts,
     create_account, 
