@@ -1,9 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import request, jsonify
 from pydantic import ValidationError
 from app.models.account import Account
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
-from app.validations.account_validation import CreateAccount
+from app.validations.account_validation import CreateAccount, LoginAccount
+from flask_jwt_extended import create_access_token
 
 def create_account():
     try:
@@ -42,13 +43,64 @@ def create_account():
         data = {}
     )
 
+def login_account():
+    try:
+        login_data = LoginAccount(**request.json)
+    except ValidationError as e:
+        return jsonify(f"Validation error occured: {e}")
+
+    email = login_data.email
+    password = login_data.password
+
+    session = Session()
+    session.begin()
+    try:
+        account = session.query(Account).filter(Account.email == email).first()
+
+        if account == None:
+            return api_response(
+                status_code = 404,
+                message = "account not found, please signup first",
+                data = {}
+            )
+        if not account.confirm_password(password):
+            return api_response(
+                status_code = 404,
+                message = "password incorrect, please check again",
+                data = {}
+            )
+        access_token = create_access_token(identity = account.account_id)
+
+        return api_response(
+            status_code = 200,
+            message = "Login success",
+            data = {"account": account.serialize(full = True), "access_token": access_token}
+        )
+    except Exception as e:
+        session.rollback()
+        return api_response(
+            status_code = 500, 
+            message = f"Login failed: {e}", 
+            data = {}
+        )
+    finally:
+        session.close()
+
 def get_all_accounts():
     session = Session()
     try:
         accounts = session.query(Account).all()
         data = [account.serialize() for account in accounts]
-        return api_response(status_code=200, message="Accounts retrieved successfully", data=data)
+        return api_response(
+            status_code = 200, 
+            message = "Accounts retrieved successfully", 
+            data = data
+        )
     except Exception as e:
-        return api_response(status_code=500, message=f"Server error: {e}", data={})
+        return api_response(
+            status_code = 500, 
+            message = f"Server error: {e}", 
+            data = {}
+        )
     finally:
         session.close()
