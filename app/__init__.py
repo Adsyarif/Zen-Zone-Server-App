@@ -24,11 +24,9 @@ app = Flask(__name__)
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
-
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "Hello, World! welcome to Zen-zone"
 
 app.register_blueprint(user_details_routes)
 app.register_blueprint(gender_routes)
@@ -45,7 +43,6 @@ app.register_blueprint(mood_category_routes)
 app.register_blueprint(mood_status_routes)
 app.register_blueprint(mood_tracker_routes)
 app.register_blueprint(like_routes)
-
 
 if __name__ == "__main__":
     app.run(debug=True)
