@@ -25,14 +25,14 @@ markupsafe = "2.1.5"
 mysql-connector-python = "8.3.0"
 pyjwt = "2.8.0"
 python-dotenv = "1.0.1"
-pydantic = "2.7.0"
 requests = "2.31.0"
 sqlalchemy = "2.0.25"
-typing-extensions = "4.9.0"
+typing-extensions = "^4.12.2"
 urllib3 = "2.2.0"
 werkzeug = "3.0.1"
 yarg = "0.1.9"
 psycopg2-binary = "^2.9.9"
+pydantic = {extras = ["email"], version = "^2.8.2"}
 
 
 [build-system]

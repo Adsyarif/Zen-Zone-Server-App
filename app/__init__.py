@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
+from flask_jwt_extended import JWTManager
 from app.routes.user_details_route import user_details_routes
 from app.routes.gender_route import gender_routes
 from app.routes.account_route import account_routes
@@ -23,6 +24,7 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+jwt = JWTManager(app)
 
 @app.route("/")
 def hello_world():
