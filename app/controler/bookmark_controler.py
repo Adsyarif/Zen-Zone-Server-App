@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models.bookmarks import Bookmarks
 from app.models.posts import Posts
+from app.models.user_details import UserDetails
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 
@@ -20,9 +21,13 @@ def do_bookmark_post(user_id, post_id):
     try:
         # data = request.json
         
-        post_query = session.query(Posts).filter(Posts.user_id == user_id)
+        post_query = session.query(Posts).filter(Posts.post_id == post_id)
         if not post_query:
             return jsonify({'message': 'No related post found'}), 400
+        
+        user_query = session.query(UserDetails).filter(UserDetails.user_id == user_id)
+        if not user_query:
+            return jsonify({'message': 'User not found'}), 400
         
         bookmark_query = session.query(Bookmarks).filter(Bookmarks.user_id == user_id, Bookmarks.post_id == post_id).first()
         if bookmark_query:
