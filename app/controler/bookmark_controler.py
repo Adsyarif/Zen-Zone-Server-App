@@ -87,3 +87,17 @@ def remove_bookmark(account_id, post_id):
     finally:
         session.close()
     
+def get_bookmark_by_account_id(account_id):
+    session = Session()
+    
+    try:
+        bookmark_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
+        if not bookmark_query:
+            return jsonify({'message': 'User Invalid'}), 400
+        data = [bookmark_query.serialize() for bookmark_query in bookmark_query]
+        return api_response(status_code=200, message="bookmarks retrieved successfully", data=data)
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+    
