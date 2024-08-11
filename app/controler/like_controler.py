@@ -87,3 +87,16 @@ def remove_like(account_id, post_id):
     finally:
         session.close()
     
+def get_like_by_account_id(account_id):
+    session = Session()
+    
+    try:
+        like_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
+        if not like_query:
+            return jsonify({'message': 'User Invalid'}), 400
+        data = [like_query.serialize() for like_query in like_query]
+        return api_response(status_code=200, message="like retrieved successfully", data=data)
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
