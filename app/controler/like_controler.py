@@ -16,25 +16,25 @@ def get_all_like():
     finally:
         session.close()
         
-def do_like_post(user_id, post_id):
+def do_like_post(account_id, post_id):
     session = Session()
     try:
         # data = request.json
+        
+        user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
+        if not user_query:
+            return jsonify({'message': 'User invalid'}), 400
         
         post_query = session.query(Posts).filter(Posts.post_id == post_id)
         if not post_query:
             return jsonify({'message': 'No related post found'}), 400
         
-        user_query = session.query(UserDetails).filter(UserDetails.user_id == user_id)
-        if not user_query:
-            return jsonify({'message': 'User not found'}), 400
-        
-        like_query = session.query(Like).filter(Like.user_id == user_id, Like.post_id == post_id).first()
+        like_query = session.query(Like).filter(Like.account_id == account_id, Like.post_id == post_id).first()
         if like_query:
             return jsonify({'message': 'Post already liked by the user'}), 400
         
         add_like = Like(
-            user_id=user_id,
+            account_id=account_id,
             post_id=post_id
         )
         
