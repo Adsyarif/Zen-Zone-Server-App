@@ -16,25 +16,25 @@ def get_all_bookmarks():
     finally:
         session.close()
         
-def do_bookmark_post(user_id, post_id):
+def do_bookmark_post(account_id, post_id):
     session = Session()
     try:
         # data = request.json
+        
+        user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
+        if not user_query:
+            return jsonify({'message': 'User Invalid'}), 400
         
         post_query = session.query(Posts).filter(Posts.post_id == post_id)
         if not post_query:
             return jsonify({'message': 'No related post found'}), 400
         
-        user_query = session.query(UserDetails).filter(UserDetails.user_id == user_id)
-        if not user_query:
-            return jsonify({'message': 'User not found'}), 400
-        
-        bookmark_query = session.query(Bookmarks).filter(Bookmarks.user_id == user_id, Bookmarks.post_id == post_id).first()
+        bookmark_query = session.query(Bookmarks).filter(Bookmarks.account_id == account_id, Bookmarks.post_id == post_id).first()
         if bookmark_query:
             return jsonify({'message': 'Post already bookmarked by the user'}), 400
         
         add_bookmark = Bookmarks(
-            user_id=user_id,
+            account_id=account_id,
             post_id=post_id
         )
         
