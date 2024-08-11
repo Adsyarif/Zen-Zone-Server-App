@@ -29,12 +29,12 @@ def do_bookmark_post(account_id, post_id):
         if not post_query:
             return jsonify({'message': 'No related post found'}), 400
         
-        bookmark_query = session.query(Bookmarks).filter(Bookmarks.account_id == account_id, Bookmarks.post_id == post_id).first()
+        bookmark_query = session.query(Bookmarks).join(UserDetails).filter(UserDetails.account_id == account_id, Bookmarks.post_id == post_id).first()
         if bookmark_query:
             return jsonify({'message': 'Post already bookmarked by the user'}), 400
         
         add_bookmark = Bookmarks(
-            account_id=account_id,
+            user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
             post_id=post_id
         )
         
@@ -61,11 +61,11 @@ def do_bookmark_post(account_id, post_id):
     finally:
         session.close()
         
-def remove_bookmark(bookmark_id):
+def remove_bookmark(account_id, post_id):
     session = Session()
     
     try:
-        bookmark_to_delete = session.query(Bookmarks).filter(Bookmarks.bookmark_id == bookmark_id).first()
+        bookmark_to_delete = session.query(Bookmarks).join(UserDetails).filter(UserDetails.account_id == account_id, Bookmarks.post_id == post_id).first()
         session.delete(bookmark_to_delete)
         session.commit()
         
