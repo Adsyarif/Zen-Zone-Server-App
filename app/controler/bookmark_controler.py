@@ -91,13 +91,16 @@ def get_bookmark_by_account_id(account_id):
     session = Session()
     
     try:
-        bookmark_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
-        if not bookmark_query:
+        user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
+        if not user_query:
             return jsonify({'message': 'User Invalid'}), 400
+        
+        bookmark_query = session.query(Bookmarks).filter(Bookmarks.user_id == user_query.user_id).all()
         data = [bookmark_query.serialize() for bookmark_query in bookmark_query]
+        
         return api_response(status_code=200, message="bookmarks retrieved successfully", data=data)
     except Exception as e:
-        return api_response(status_code=500, message=f"Server error: {e}", data={})
+        return api_response(status_code=500, message=f"Server error: {str(e)}", data={})
     finally:
         session.close()
     
