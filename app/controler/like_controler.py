@@ -87,5 +87,3 @@ def remove_like(like_id):
     finally:
         session.close()
     
-# def get_like_by_id(like_id):
-    
