@@ -29,12 +29,12 @@ def do_like_post(account_id, post_id):
         if not post_query:
             return jsonify({'message': 'No related post found'}), 400
         
-        like_query = session.query(Like).filter(Like.account_id == account_id, Like.post_id == post_id).first()
+        like_query = session.query(Like).join(UserDetails).filter(UserDetails.account_id == account_id, Like.post_id == post_id).first()
         if like_query:
             return jsonify({'message': 'Post already liked by the user'}), 400
         
         add_like = Like(
-            account_id=account_id,
+            user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
             post_id=post_id
         )
         
@@ -61,11 +61,11 @@ def do_like_post(account_id, post_id):
     finally:
         session.close()
         
-def remove_like(like_id):
+def remove_like(account_id, post_id):
     session = Session()
     
     try:
-        likes_to_delete = session.query(Like).filter(Like.like_id == like_id).first()
+        likes_to_delete = session.query(Like).join(UserDetails).filter(UserDetails.account_id == account_id, Like.post_id == post_id).first()
         session.delete(likes_to_delete)
         session.commit()
         
