@@ -91,12 +91,15 @@ def get_like_by_account_id(account_id):
     session = Session()
     
     try:
-        like_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
-        if not like_query:
+        user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
+        if not user_query:
             return jsonify({'message': 'User Invalid'}), 400
+        
+        like_query = session.query(Like).filter(Like.user_id == user_query.user_id).all()
         data = [like_query.serialize() for like_query in like_query]
-        return api_response(status_code=200, message="like retrieved successfully", data=data)
+        
+        return api_response(status_code=200, message="likes retrieved successfully", data=data)
     except Exception as e:
-        return api_response(status_code=500, message=f"Server error: {e}", data={})
+        return api_response(status_code=500, message=f"Server error: {str(e)}", data={})
     finally:
         session.close()
