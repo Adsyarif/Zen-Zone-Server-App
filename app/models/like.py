@@ -17,7 +17,8 @@ class Like(Base):
         data = {
             'like_id': self.like_id,
             'post_id': self.post_id,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'account_id': self.user_details.account_id
         }
         if full:
             data.update({
