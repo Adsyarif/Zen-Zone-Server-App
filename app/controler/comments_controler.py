@@ -3,6 +3,8 @@ from sqlalchemy import func
 from app.models.comments import Comments
 from app.models.posts import Posts
 from app.models.user_details import UserDetails
+from app.models.posts import Posts
+from app.models.user_details import UserDetails
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 from sqlalchemy.orm import joinedload
@@ -171,6 +173,39 @@ def get_comments_by_post(post_id):
         data = [comment.serialize() for comment in comments]
 
         return api_response(status_code=200, message="Comments retrieved successfully", data=data)
+
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    
+    finally:
+        session.close()
+
+def create_comments_by_post(account_id, post_id):
+    session = Session()
+    try:
+        data = request.get_json()
+        content = data.get('content') 
+        
+        post = session.query(Posts).filter(Posts.post_id == post_id).first()
+        if post is None:
+            return jsonify({'message': 'No related post found'}), 400
+
+        if not content:
+            return api_response(status_code=400, message="Missing content", data={})
+
+        user = session.query(UserDetails).filter_by(account_id=account_id).first()
+        if user is None:
+            return api_response(status_code=404, message="User not found", data={})
+
+        new_comment= Comments(
+            user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
+            post_id=post_id,
+            content=content
+        )
+        session.add(new_comment)
+        session.commit()
+
+        return api_response(status_code=201, message="Comment created successfully", data={"comment_id": new_comment.comment_id})
 
     except Exception as e:
         return api_response(status_code=500, message=f"Server error: {e}", data={})

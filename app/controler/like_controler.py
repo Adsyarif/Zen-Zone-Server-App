@@ -247,19 +247,37 @@ def do_like_post(account_id, post_id):
 def get_like_by_account_id(account_id):
     session = Session()
     try:
+        # Mencoba mencari user berdasarkan account_id
         user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
-        if not user_query:
-            return jsonify({'message': 'User not found'}), 400
 
+        # Jika tidak ditemukan user yang sesuai dengan account_id, langsung kembalikan list kosong
+        if not user_query:
+            return api_response(
+                status_code=200,
+                message="User has no likes yet or user does not exist",
+                data=[]
+            )
+
+        # Jika user ditemukan, lanjutkan untuk mencari likes berdasarkan user_id
         likes = session.query(Like).filter(Like.user_id == user_query.user_id).all()
         data = [like.serialize() for like in likes]
 
+        # Jika tidak ada likes, kembalikan list kosong
+        if not data:
+            return api_response(
+                status_code=200,
+                message="User has no likes yet",
+                data=[]
+            )
+
+        # Jika likes ditemukan, kembalikan data likes
         return api_response(
             status_code=200,
             message="Likes retrieved successfully",
             data=data
         )
     except Exception as e:
+        # Menangani kesalahan server dengan mengembalikan pesan error
         return api_response(
             status_code=500,
             message=f"Server error: {str(e)}",
@@ -267,6 +285,7 @@ def get_like_by_account_id(account_id):
         )
     finally:
         session.close()
+
         
 def remove_like(account_id, post_id):
     session = Session()
