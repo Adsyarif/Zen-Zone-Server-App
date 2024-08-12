@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.routes.user_details_route import user_details_routes
 from app.routes.gender_route import gender_routes
@@ -25,6 +26,7 @@ app = Flask(__name__)
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
+CORS(app, origins=['http://localhost:5000'], supports_credentials=True)
 
 @app.route("/")
 def hello_world():
