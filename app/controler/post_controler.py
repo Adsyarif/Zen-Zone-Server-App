@@ -77,3 +77,23 @@ def get_post_by_id(post_id):
 
 def create_post():
     session = Session()
+    try:
+        data = request.json
+        if 'user_id' not in data or 'content' not in data:
+            return api_response(status_code=400, message="Missing 'user_id' or 'content' in request", data={})
+
+        new_post = Posts(
+            user_id=data['user_id'],
+            content=data['content'],
+        )
+
+        session.add(new_post)
+        session.commit()
+
+        return api_response(status_code=201, message="Post created successfully", data=new_post.serialize())
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
