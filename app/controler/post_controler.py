@@ -128,3 +128,38 @@ def soft_delete_post(post_id):
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
+
+def update_post(post_id):
+    session = Session()
+    try:
+
+        user_id = request.json.get('user_id')
+        content = request.json.get('content')
+
+        if not user_id:
+            return api_response(status_code=400, message="User ID is required", data={})
+
+        if not content:
+            return api_response(status_code=400, message="Content is required", data={})
+
+        post = session.query(Posts).filter_by(post_id=post_id).first()
+        if not post:
+            return api_response(status_code=404, message="Post not found", data={})
+
+        if post.user_id != user_id:
+            return api_response(status_code=403, message="Unauthorized: You are not allowed to update this post", data={})
+
+        if post.deleted_at is not None:
+            return api_response(status_code=400, message="Post is deleted and cannot be updated", data={})
+
+        post.content = content
+        session.commit()
+
+        return api_response(status_code=200, message="Post updated successfully", data=post.serialize(full=True))
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
