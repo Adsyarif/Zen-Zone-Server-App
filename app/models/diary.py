@@ -22,7 +22,8 @@ class Diary(Base):
             'diary_id': self.diary_id,
             'account_id': self.account_id, 
             'mood_status_id': self.mood_status.serialize() if self.mood_status else None,
-            'content': self.content
+            'content': self.content,
+            'value': self.mood_status.value
         }
         if full:
             data.update ({
