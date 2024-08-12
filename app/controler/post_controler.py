@@ -11,7 +11,7 @@ from app.models.comments import Comments
 def get_all_post():
     session = Session()
     try:
-        posts = session.query(Posts).all()
+        posts = session.query(Posts).filter(Posts.deleted_at.is_(None)).all()
 
         if not posts:
             return api_response(status_code=404, message="No posts found", data={})
@@ -50,7 +50,8 @@ def get_all_post():
 def get_post_by_id(post_id):
     session = Session()
     try:
-        post = session.query(Posts).filter_by(post_id=post_id).first()
+        post = session.query(Posts).filter_by(
+            post_id=post_id, deleted_at=None).first()
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
 
@@ -91,6 +92,28 @@ def create_post():
         session.commit()
 
         return api_response(status_code=201, message="Post created successfully", data=new_post.serialize())
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+
+
+def soft_delete_post(post_id):
+    session = Session()
+    try:
+        post = session.query(Posts).filter_by(post_id=post_id).first()
+        if not post:
+            return api_response(status_code=404, message="Post not found", data={})
+
+        if post.deleted_at is not None:
+            return api_response(status_code=400, message="Post already deleted", data={})
+
+        post.deleted_at = func.now()
+        session.commit()
+
+        return api_response(status_code=200, message="Post soft deleted successfully", data=post.serialize(full=True))
 
     except Exception as e:
         session.rollback()
