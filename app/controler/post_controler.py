@@ -103,9 +103,17 @@ def create_post():
 def soft_delete_post(post_id):
     session = Session()
     try:
+
+        user_id = request.json.get('user_id')
+        if not user_id:
+            return api_response(status_code=400, message="User ID is required", data={})
+
         post = session.query(Posts).filter_by(post_id=post_id).first()
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
+
+        if post.user_id != user_id:
+            return api_response(status_code=403, message="Unauthorized: You are not allowed to delete this post", data={})
 
         if post.deleted_at is not None:
             return api_response(status_code=400, message="Post already deleted", data={})
