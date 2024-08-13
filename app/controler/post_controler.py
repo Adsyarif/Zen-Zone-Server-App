@@ -6,7 +6,9 @@ from app.utils.api_response import api_response
 from app.models.bookmarks import Bookmarks
 from app.models.like import Like
 from app.models.comments import Comments
+
 from app.models.user_details import UserDetails
+
 
 
 def get_all_post():
@@ -53,6 +55,7 @@ def get_post_by_id(post_id):
     try:
         post = session.query(Posts).filter_by(
             post_id=post_id, deleted_at=None).first()
+
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
 
@@ -162,6 +165,7 @@ def update_post(post_id):
             return api_response(status_code=404, message="Post not found", data={})
 
         if post.user_id != user_details.user_id:
+
             return api_response(status_code=403, message="Unauthorized: You are not allowed to update this post", data={})
 
         if post.deleted_at is not None:
