@@ -80,11 +80,16 @@ def create_post():
     session = Session()
     try:
         data = request.json
-        if 'user_id' not in data or 'content' not in data:
-            return api_response(status_code=400, message="Missing 'user_id' or 'content' in request", data={})
+        if 'account_id' not in data or 'content' not in data:
+            return api_response(status_code=400, message="Missing 'account_id' or 'content' in request", data={})
+
+        user_details = session.query(UserDetails).filter_by(
+            account_id=data['account_id']).first()
+        if not user_details:
+            return api_response(status_code=404, message="User not found", data={})
 
         new_post = Posts(
-            user_id=data['user_id'],
+            user_id=user_details.user_id,
             content=data['content'],
         )
 
@@ -103,16 +108,20 @@ def create_post():
 def soft_delete_post(post_id):
     session = Session()
     try:
+        account_id = request.json.get('account_id')
+        if not account_id:
+            return api_response(status_code=400, message="Account ID is required", data={})
 
-        user_id = request.json.get('user_id')
-        if not user_id:
-            return api_response(status_code=400, message="User ID is required", data={})
+        user_details = session.query(UserDetails).filter_by(
+            account_id=account_id).first()
+        if not user_details:
+            return api_response(status_code=404, message="User not found", data={})
 
         post = session.query(Posts).filter_by(post_id=post_id).first()
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
 
-        if post.user_id != user_id:
+        if post.user_id != user_details.user_id:
             return api_response(status_code=403, message="Unauthorized: You are not allowed to delete this post", data={})
 
         if post.deleted_at is not None:
@@ -133,21 +142,25 @@ def soft_delete_post(post_id):
 def update_post(post_id):
     session = Session()
     try:
-
-        user_id = request.json.get('user_id')
+        account_id = request.json.get('account_id')
         content = request.json.get('content')
 
-        if not user_id:
-            return api_response(status_code=400, message="User ID is required", data={})
+        if not account_id:
+            return api_response(status_code=400, message="Account ID is required", data={})
 
         if not content:
             return api_response(status_code=400, message="Content is required", data={})
+
+        user_details = session.query(UserDetails).filter_by(
+            account_id=account_id).first()
+        if not user_details:
+            return api_response(status_code=404, message="User not found", data={})
 
         post = session.query(Posts).filter_by(post_id=post_id).first()
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
 
-        if post.user_id != user_id:
+        if post.user_id != user_details.user_id:
             return api_response(status_code=403, message="Unauthorized: You are not allowed to update this post", data={})
 
         if post.deleted_at is not None:

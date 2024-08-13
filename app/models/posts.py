@@ -28,6 +28,7 @@ class Posts(Base):
             'content': self.content,
             'created_at': self.created_at,
             'user_name': self.user_details.user_name,
+            'account_id': self.user_details.account_id,
         }
         if full:
             data.update({
