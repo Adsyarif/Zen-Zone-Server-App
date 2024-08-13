@@ -31,6 +31,7 @@ class Diary(Base):
                 'updated_at': self.updated_at,
                 'deleted_at': self.deleted_at
             })
+        return data
     
     def __repr__(self):
         return f'<Diary{self.diary_id}>'

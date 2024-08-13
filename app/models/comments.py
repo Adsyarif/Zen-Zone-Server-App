@@ -22,7 +22,9 @@ class Comments(Base):
             'post_id': self.post_id,
             'user_id': self.user_id,
             'content': self.content,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'user_name': self.user_details.user_name,
+            'account_id': self.user_details.account_id
         }
         if full:
             data.update({

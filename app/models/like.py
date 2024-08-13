@@ -22,7 +22,8 @@ class Like(Base):
         }
         if full:
             data.update({
-                'created_at': self.created_at
+                'created_at': self.created_at,
+                'user_name':self.user_details.user_name
             })
         return data
     

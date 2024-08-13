@@ -19,35 +19,35 @@ def get_all_bookmarks():
 def do_bookmark_post(account_id, post_id):
     session = Session()
     try:
-        # data = request.json
+        bookmark_query = session.query(Posts).filter(Posts.post_id == post_id)
+        if not bookmark_query:
+            return jsonify({'message': 'No related bookmark found'}), 400
         
         user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id)
         if not user_query:
-            return jsonify({'message': 'User Invalid'}), 400
+            return jsonify({'message': 'User not found'}), 400
         
-        post_query = session.query(Posts).filter(Posts.post_id == post_id)
-        if not post_query:
-            return jsonify({'message': 'No related post found'}), 400
+        bookmar_query = (
+            session.query(Bookmarks)
+            .join(UserDetails)
+            .filter(UserDetails.account_id == account_id, Bookmarks.post_id == post_id)
+            .first()
+        )
         
-        bookmark_query = session.query(Bookmarks).join(UserDetails).filter(UserDetails.account_id == account_id, Bookmarks.post_id == post_id).first()
-        if bookmark_query:
-            return jsonify({'message': 'Post already bookmarked by the user'}), 400
+        if bookmar_query:
+            return jsonify({'message': 'Post already liked by the user'}), 400
         
         add_bookmark = Bookmarks(
             user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
             post_id=post_id
         )
         
-        # if data.get('')
-        
         session.add(add_bookmark)
         session.commit()
         
-        # data = add_like.serialize()
-        
         return api_response(
             status_code=200,
-            message="Post successfully bookmarked",
+            message="Post successfully Bookmark",
             data=add_bookmark.serialize(full=False)
         )
     except Exception as e:
@@ -92,15 +92,35 @@ def get_bookmark_by_account_id(account_id):
     
     try:
         user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
+
         if not user_query:
-            return jsonify({'message': 'User Invalid'}), 400
-        
+            return api_response(
+                status_code=200,
+                message="User has no bookmarks yet or user does not exist",
+                data=[]
+            )
+
         bookmark_query = session.query(Bookmarks).filter(Bookmarks.user_id == user_query.user_id).all()
-        data = [bookmark_query.serialize() for bookmark_query in bookmark_query]
-        
-        return api_response(status_code=200, message="bookmarks retrieved successfully", data=data)
+        data = [bookmark.serialize() for bookmark in bookmark_query]
+
+        if not data:
+            return api_response(
+                status_code=200,
+                message="User has no bookmarks yet",
+                data=[]
+            )
+
+        return api_response(
+            status_code=200,
+            message="Bookmarks retrieved successfully",
+            data=data
+        )
     except Exception as e:
-        return api_response(status_code=500, message=f"Server error: {str(e)}", data={})
+        return api_response(
+            status_code=500,
+            message=f"Server error: {str(e)}",
+            data={}
+        )
     finally:
         session.close()
     

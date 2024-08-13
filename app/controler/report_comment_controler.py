@@ -1,5 +1,6 @@
 from flask import request, jsonify
 from app.models.report_comment import ReportComment
+from app.models.user_details import UserDetails
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 
@@ -23,20 +24,25 @@ def get_all_report_comment():
     finally:
         session.close()
 
-def do_report_comment(user_id, comment_id):
+def do_report_comment(account_id, comment_id):
     session = Session()
     try:
         data = request.json
 
-        report = session.query(ReportComment).filter(ReportComment.user_id == user_id, ReportComment.comment_id == comment_id).first()
+        report = (
+            session.query(ReportComment)
+            .join(UserDetails)
+            .filter(UserDetails.account_id == account_id, ReportComment.comment_id == comment_id)
+            .first()
+        )
         if report:
-            return jsonify({'message': 'Post already report by the user'}), 400
+            return jsonify({'message': 'Comment already report by the user'}), 400
         
         if not data.get('report_category_id') and not data.get('report_content'):
             return jsonify({'message': 'Either report_category_id or report_content must be provided'}), 400
 
         report_comment = ReportComment(
-            user_id=user_id,
+            user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
             comment_id=comment_id,
         )
 
