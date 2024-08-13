@@ -39,8 +39,6 @@ CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
 CORS(app, origins=['http://localhost:3000'
 ], supports_credentials=True)
 
-
-
 @app.route("/")
 def hello_world():
     return "Hello, World! welcome to Zen-zone"
