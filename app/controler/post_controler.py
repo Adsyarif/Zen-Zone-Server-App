@@ -6,6 +6,7 @@ from app.utils.api_response import api_response
 from app.models.bookmarks import Bookmarks
 from app.models.like import Like
 from app.models.comments import Comments
+from app.models.user_details import UserDetails
 
 
 def get_all_post():
