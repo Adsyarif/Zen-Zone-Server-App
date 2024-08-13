@@ -247,10 +247,8 @@ def do_like_post(account_id, post_id):
 def get_like_by_account_id(account_id):
     session = Session()
     try:
-        # Mencoba mencari user berdasarkan account_id
         user_query = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
 
-        # Jika tidak ditemukan user yang sesuai dengan account_id, langsung kembalikan list kosong
         if not user_query:
             return api_response(
                 status_code=200,
@@ -258,11 +256,10 @@ def get_like_by_account_id(account_id):
                 data=[]
             )
 
-        # Jika user ditemukan, lanjutkan untuk mencari likes berdasarkan user_id
+
         likes = session.query(Like).filter(Like.user_id == user_query.user_id).all()
         data = [like.serialize() for like in likes]
 
-        # Jika tidak ada likes, kembalikan list kosong
         if not data:
             return api_response(
                 status_code=200,
@@ -270,14 +267,12 @@ def get_like_by_account_id(account_id):
                 data=[]
             )
 
-        # Jika likes ditemukan, kembalikan data likes
         return api_response(
             status_code=200,
             message="Likes retrieved successfully",
             data=data
         )
     except Exception as e:
-        # Menangani kesalahan server dengan mengembalikan pesan error
         return api_response(
             status_code=500,
             message=f"Server error: {str(e)}",
@@ -317,5 +312,67 @@ def remove_like(account_id, post_id):
             message=f"Server error: {str(e)}",
             data={}
         )
+    finally:
+        session.close()
+
+def get_notif_like(account_id):
+    session = Session()
+    try:
+        user = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
+        if not user:
+            return jsonify({
+                'status': {
+                    'code': 404,
+                    'message': 'User not found'
+                },
+                'data': []
+            })
+
+        user_id = user.user_id
+
+        posts = session.query(Posts).filter(Posts.user_id == user_id).options(
+            joinedload(Posts.like).joinedload(Like.user_details)  
+        ).all()
+
+        if not posts:
+            return jsonify({
+                'status': {
+                    'code': 404,
+                    'message': 'No posts found for this user'
+                },
+                'data': []
+            })
+        likes_data = []
+        for post in posts:
+            for like in post.like:
+                if like.user_details.account_id == account_id:
+                    continue
+                likes_data.append({
+                    'post_id': post.post_id,
+                    'post_content': post.content,
+                    'post_created_at': post.created_at,
+                    'like_id': like.like_id,
+                    'user_id': like.user_id,
+                    'user_name': like.user_details.user_name,
+                    'liked_at': like.created_at
+                })
+
+        return jsonify({
+            'status': {
+                'code': 200,
+                'message': 'Likes retrieved successfully'
+            },
+            'data': likes_data
+        })
+
+    except Exception as e:
+        return jsonify({
+            'status': {
+                'code': 500,
+                'message': f'Server error: {e}'
+            },
+            'data': []
+        })
+    
     finally:
         session.close()

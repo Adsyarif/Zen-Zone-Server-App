@@ -32,7 +32,9 @@ class Posts(Base):
         }
         if full:
             data.update({
-                'deleted_at': self.deleted_at
+                'deleted_at': self.deleted_at,
+                
+                
             })
         return data
 

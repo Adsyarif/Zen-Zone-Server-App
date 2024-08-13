@@ -34,3 +34,24 @@ def get_mood_status_by_status_id(status_id):
     
     finally:
         session.close()
+
+
+
+def get_mood_status_by_status_id(status_id):
+    session = Session()
+    try:
+        mood_status = session.query(MoodStatus).filter(MoodStatus.status_id == status_id).first()
+        
+        if not mood_status:
+            return jsonify({'message': 'Mood not listed'}), 400
+
+        data = mood_status.serialize()  
+
+        return api_response(status_code=200, message="Specified mood status retrieved successfully", data=data)
+
+    except Exception as e:
+        print(f"General error: {e}")
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    
+    finally:
+        session.close()
