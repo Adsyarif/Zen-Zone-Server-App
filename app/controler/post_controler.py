@@ -164,3 +164,23 @@ def soft_delete_post(post_id):
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
+def delete_post_by_id(post_id):
+    session = Session()
+    try:
+        # Cari post berdasarkan post_id
+        post = session.query(Posts).filter_by(post_id=post_id).first()
+        if not post:
+            return api_response(status_code=404, message="Post not found", data={})
+
+        # Hapus post
+        session.delete(post)
+        session.commit()
+
+        return api_response(status_code=200, message="Post deleted successfully", data={})
+    except Exception as e:
+        # Rollback jika terjadi error
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()

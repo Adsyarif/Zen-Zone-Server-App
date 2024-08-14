@@ -2,6 +2,7 @@ from flask import request, jsonify
 from pydantic import ValidationError
 from app.models.account import Account
 from app.connector.sql_connector import Session
+from app.models.user_details import UserDetails
 from app.utils.api_response import api_response
 from app.validations.account_validation import CreateAccount, LoginAccount
 from flask_jwt_extended import create_access_token
@@ -48,6 +49,11 @@ def create_account():
         data = {}
     )
 
+def get_user_profile_status(account_id):
+    session = Session()
+    user_details = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
+    return user_details is not None
+
 def login_account():
     try:
         login_data = LoginAccount(**request.json)
@@ -62,6 +68,8 @@ def login_account():
     try:
         account = session.query(Account).filter(Account.email == email).first()
 
+        
+
         if account == None:
             return api_response(
                 status_code = 404,
@@ -74,12 +82,17 @@ def login_account():
                 message = "password incorrect, please check again",
                 data = {}
             )
+        profile_incomplete = not get_user_profile_status(account.account_id)
         access_token = create_access_token(identity = account.account_id)
 
         return api_response(
-            status_code = 200,
-            message = "Login success",
-            data = {"account": account.serialize(), "access_token": access_token}
+            status_code=200,
+            message="Login success",
+            data={
+                "account": account.serialize(),
+                "access_token": access_token,
+                "profile_incomplete": profile_incomplete
+            }
         )
     except Exception as e:
         session.rollback()
