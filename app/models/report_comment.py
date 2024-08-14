@@ -23,7 +23,8 @@ class ReportComment(Base):
             'report_category_id': self.report_category.serialize() if self.report_category else None,
             'report_content': self.report_content,
             'comment_id': self.comment_id,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'account_id':self.user_details.account_id
         }
         if full:
             data.update({
