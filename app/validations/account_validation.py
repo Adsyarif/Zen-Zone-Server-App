@@ -1,5 +1,8 @@
 from pydantic import BaseModel, EmailStr, field_validator
+<<<<<<< HEAD
 
+=======
+>>>>>>> ff7a480 (feat:login-controler)
 class CreateAccount(BaseModel):
     email: EmailStr
     password: str
@@ -11,6 +14,16 @@ class CreateAccount(BaseModel):
             raise ValueError('Email must be provided')
         return v
     
+    @field_validator('email')
+    def email_complexity_check(cls, v):
+        if len(v) < 12:
+            raise ValueError('email must be at least 12 characters')
+        if len(v) > 50:
+            raise ValueError('Email must not exceed 50 characters')
+        if '@' not in v or '.' not in v:
+            raise ValueError('Email must contain "@" and "." characters')
+        return v
+
     @field_validator('email')
     def email_complexity_check(cls, v):
         if len(v) < 12:
@@ -59,5 +72,9 @@ class LoginAccount(BaseModel):
     def password_must_be_provided(cls, v):
         if not v:
             raise ValueError('Password must be provided')
+<<<<<<< HEAD
         return v
     
+=======
+        return v
+>>>>>>> ff7a480 (feat:login-controler)
