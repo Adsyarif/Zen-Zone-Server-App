@@ -34,4 +34,3 @@ def get_mood_status_by_status_id(status_id):
     
     finally:
         session.close()
-    
