@@ -157,4 +157,23 @@ def get_notif_comment(account_id):
         })
     
     finally:
-        session.close() 
+        session.close()
+
+def get_comments_by_post(post_id):
+    session = Session()
+    try:
+
+        comments = session.query(Comments).filter(Comments.post_id == post_id).all()
+
+        if not comments:
+            return api_response(status_code=404, message="No comments found for this post", data={})
+
+        data = [comment.serialize() for comment in comments]
+
+        return api_response(status_code=200, message="Comments retrieved successfully", data=data)
+
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    
+    finally:
+        session.close()
