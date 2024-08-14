@@ -19,6 +19,7 @@ from app.routes.mood_category_route import mood_category_routes
 from app.routes.mood_status_route import mood_status_routes
 from app.routes.mood_tracker_route import mood_tracker_routes
 from app.routes.like_route import like_routes
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -27,6 +28,11 @@ app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
+
+CORS(app, origins=['http://localhost:3000'
+], supports_credentials=True)
+
+
 
 @app.route("/")
 def hello_world():
