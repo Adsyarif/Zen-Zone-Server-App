@@ -1,10 +1,6 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
-<<<<<<< HEAD
-from flask_cors import CORS
-=======
->>>>>>> ff7a480 (feat:login-controler)
 from flask_jwt_extended import JWTManager
 from app.routes.user_details_route import user_details_routes
 from app.routes.gender_route import gender_routes
@@ -31,10 +27,6 @@ app = Flask(__name__)
 
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
-<<<<<<< HEAD
-CORS(app, origins=['http://localhost:3000'], supports_credentials=True)
-=======
->>>>>>> ff7a480 (feat:login-controler)
 
 CORS(app, origins=['http://localhost:3000'
 ], supports_credentials=True)
