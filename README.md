@@ -21,7 +21,7 @@ This project serves as the backend for Zen-Zone, handling all the data managemen
 
 ## ERD
 
-![Entity-Relationship-Diagram](./app/assets/erd-zen-zone.png)
+![Entity-Relationship-Diagram](./app/assets/image.png)
 
 ## Prerequisites
 
