@@ -14,11 +14,7 @@ class Role(Base):
     def serialize(self):
         return {
             'role_id': self.role_id,
-<<<<<<< HEAD
             'value': self.value
-=======
-            'name': self.value
->>>>>>> ff7a480 (feat:login-controler)
         }
 
     def __repr__(self):

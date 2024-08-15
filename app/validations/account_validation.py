@@ -1,8 +1,4 @@
 from pydantic import BaseModel, EmailStr, field_validator
-<<<<<<< HEAD
-
-=======
->>>>>>> ff7a480 (feat:login-controler)
 class CreateAccount(BaseModel):
     email: EmailStr
     password: str
@@ -72,9 +68,5 @@ class LoginAccount(BaseModel):
     def password_must_be_provided(cls, v):
         if not v:
             raise ValueError('Password must be provided')
-<<<<<<< HEAD
         return v
     
-=======
-        return v
->>>>>>> ff7a480 (feat:login-controler)
