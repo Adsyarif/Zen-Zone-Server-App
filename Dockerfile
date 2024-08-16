@@ -43,4 +43,4 @@ COPY . /app
 
 RUN poetry run flask 
 
-CMD ["/Zen-Zone-Server-App/.venv/bin/gunicorn", "-w 4", "-b 0.0.0.0:5000", "app:app"]
+CMD ["/app/.venv/bin/gunicorn", "-w 4", "-b 0.0.0.0:5000", "app:app"]
