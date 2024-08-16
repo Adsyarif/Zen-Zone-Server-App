@@ -52,4 +52,4 @@ app.register_blueprint(mood_tracker_routes)
 app.register_blueprint(like_routes)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
