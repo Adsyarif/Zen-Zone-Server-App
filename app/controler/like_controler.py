@@ -75,10 +75,8 @@ def get_like_by_account_id(account_id):
                 message="User has no likes yet or user does not exist",
                 data=[]
             )
-
-
         likes = session.query(Like).filter(Like.user_id == user_query.user_id).all()
-        data = [like.serialize() for like in likes]
+        data = [like.serialize(True) for like in likes]
 
         if not data:
             return api_response(

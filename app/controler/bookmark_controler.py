@@ -101,7 +101,7 @@ def get_bookmark_by_account_id(account_id):
             )
 
         bookmark_query = session.query(Bookmarks).filter(Bookmarks.user_id == user_query.user_id).all()
-        data = [bookmark.serialize() for bookmark in bookmark_query]
+        data = [bookmark.serialize(True) for bookmark in bookmark_query]
 
         if not data:
             return api_response(

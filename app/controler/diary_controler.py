@@ -7,16 +7,23 @@ from sqlalchemy import func
 from app.models.account import Account
 
 
-# def get_all_diary():
-#     session = Session()
-#     try:
-#         diary = session.query(Diary).all()
-#         data = [diary.serialize(full=True) for diary in diary]
-#         return api_response(status_code=200, message="Diary retrieved successfully", data=data)
-#     except Exception as e:
-#         return api_response(status_code=500, message=f"Server error: {e}", data={})
-#     finally:
-#         session.close()
+def get_diary_by_account_id(account_id):
+    session = Session()
+    try:
+        diary = session.query(Diary).filter(Diary.account_id == account_id).all()
+        
+        if not diary:
+            return api_response(status_code=404, message="No diary entries found for this account", data=[])
+        data = [diary.serialize() for diary in diary]
+        
+        return api_response(status_code=200, message="Diary entries retrieved successfully", data=data)
+    
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data=[])
+    
+    finally:
+        session.close()
+
 
 def get_all_diary():
     session = Session()
@@ -55,6 +62,7 @@ def create_diary_entry(account_id):
     try:
         content = request.json.get("content")
         mood_status_id = request.json.get("mood_status_id")
+        created_at = request.json.get("created_at")
 
         if not content:
             return api_response(status_code=400, message="Diary content is required", data={})
@@ -64,12 +72,13 @@ def create_diary_entry(account_id):
         new_diary_entry = Diary(
             account_id=account_id,
             mood_status_id=mood_status_id,
-            content=content
+            content=content,
+            created_at=created_at,
         )
 
         session.add(new_diary_entry)
         session.commit()
-        return api_response(status_code=201, message="Diary created successfully", data=new_diary_entry.serialize(full=True))
+        return api_response(status_code=201, message="Diary created successfully", data=new_diary_entry.serialize(full=False))
 
     except Exception as e:
         session.rollback()
@@ -84,24 +93,23 @@ def edit_diary_by_id(account_id, diary_id):
     try:
         content = request.json.get("content")
         mood_status_id = request.json.get("mood_status_id")
-        # account_id = request.json.get("account_id")
+        updated_at = request.json.get("updated_at")
 
         if not content:
             return api_response(status_code=400, message="Diary content is required", data={})
         if not mood_status_id:
             return api_response(status_code=400, message="Mood status ID is required", data={})
-        # if not account_id:
-        #     return api_response(status_code=400, message="Account ID is required", data={})
 
         diary_entry_to_edit = session.query(Diary).filter(
             Diary.account_id == account_id,
-            Diary.diary_id == diary_id
+            Diary.diary_id == diary_id,
             ).first()
         if not diary_entry_to_edit:
             return api_response(status_code=403, message="Unauthorized: You are not allowed to edit this diary entry", data={})
 
         diary_entry_to_edit.content = content
         diary_entry_to_edit.mood_status_id = mood_status_id
+        diary_entry_to_edit.updated_at = updated_at
         
         session.commit()
         return api_response(status_code=200, message="Diary updated successfully", data=diary_entry_to_edit.serialize(full=True))
@@ -116,15 +124,6 @@ def edit_diary_by_id(account_id, diary_id):
 def soft_delete_diary_entry_by_id(account_id, diary_id):
     session = Session()
     try:
-        request_data = request.json
-        mood_status_id = request_data.get("mood_status_id")
-        content = request_data.get("content")
-
-        if not mood_status_id:
-            return api_response(status_code=400, message="Mood status ID is required", data={})
-        
-        if not content:
-            return api_response(status_code=400, message="Diary content is required", data={})
         
         diary_entry_to_delete = session.query(Diary).filter(
             Diary.diary_id==diary_id,
@@ -134,11 +133,6 @@ def soft_delete_diary_entry_by_id(account_id, diary_id):
         if not diary_entry_to_delete:
             return api_response(status_code=404, message="Diary entry not found", data={})
 
-        diary_entry_to_delete.content = content
-        diary_entry_to_delete.mood_status_id = mood_status_id
-        
-        if diary_entry_to_delete.deleted_at is not None:
-            return api_response(status_code=400, message="Diary entry is deleted and cannot be updated", data={})
         
         diary_entry_to_delete.deleted_at = func.now()
         session.commit()
