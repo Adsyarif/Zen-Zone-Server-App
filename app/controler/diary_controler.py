@@ -1,10 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import request
 from app.models.diary import Diary
-# from app.models.mood_status import MoodStatus
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 from sqlalchemy import func
-from app.models.account import Account
 
 
 def get_diary_by_account_id(account_id):
@@ -93,7 +91,7 @@ def edit_diary_by_id(account_id, diary_id):
     try:
         content = request.json.get("content")
         mood_status_id = request.json.get("mood_status_id")
-        updated_at = request.json.get("updated_at")
+        created_at = request.json.get("created_at")
 
         if not content:
             return api_response(status_code=400, message="Diary content is required", data={})
@@ -109,7 +107,7 @@ def edit_diary_by_id(account_id, diary_id):
 
         diary_entry_to_edit.content = content
         diary_entry_to_edit.mood_status_id = mood_status_id
-        diary_entry_to_edit.updated_at = updated_at
+        diary_entry_to_edit.created_at = created_at
         
         session.commit()
         return api_response(status_code=200, message="Diary updated successfully", data=diary_entry_to_edit.serialize(full=True))

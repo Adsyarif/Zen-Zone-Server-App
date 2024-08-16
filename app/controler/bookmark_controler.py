@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import jsonify
 from app.models.bookmarks import Bookmarks
 from app.models.posts import Posts
 from app.models.user_details import UserDetails

@@ -1,4 +1,3 @@
-from flask import Blueprint, request, jsonify
 from app.models.mood_tracker import MoodTracker
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response

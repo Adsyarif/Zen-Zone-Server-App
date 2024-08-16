@@ -13,7 +13,7 @@ def get_all_post():
     session = Session()
     try:
         posts = session.query(Posts).options(
-            joinedload(Posts.like).joinedload(Like.user_details),  # Mengambil informasi pengguna yang menyukai postingan
+            joinedload(Posts.like).joinedload(Like.user_details), 
             joinedload(Posts.comments),
             joinedload(Posts.bookmarks)
         ).all()
@@ -108,29 +108,6 @@ def create_post(account_id):
     finally:
         session.close()
 
-# def soft_delete_post(account_id, post_id):
-#     session = Session()
-#     try:
-#         post = session.query(Posts).filter_by(post_id=post_id).first()
-#         if not post:
-#             return api_response(status_code=404, message="Post not found", data={})
-
-#         if post.user_details.account_id != account_id:
-#             return api_response(status_code=403, message="Unauthorized: You are not allowed to delete this post", data={})
-
-#         if post.deleted_at is not None:
-#             return api_response(status_code=400, message="Post already deleted", data={})
-
-#         post.deleted_at = func.now()
-#         session.commit()
-
-#         return api_response(status_code=200, message="Post soft deleted successfully", data=post.serialize(full=True))
-
-#     except Exception as e:
-#         session.rollback()
-#         return api_response(status_code=500, message=f"Server error: {e}", data={})
-#     finally:
-#         session.close()
 
 def soft_delete_post(post_id):
     session = Session()
@@ -168,64 +145,20 @@ def soft_delete_post(post_id):
 def delete_post_by_id(post_id):
     session = Session()
     try:
-        # Cari post berdasarkan post_id
         post = session.query(Posts).filter_by(post_id=post_id).first()
         if not post:
             return api_response(status_code=404, message="Post not found", data={})
 
-        # Hapus post
         session.delete(post)
         session.commit()
 
         return api_response(status_code=200, message="Post deleted successfully", data={})
     except Exception as e:
-        # Rollback jika terjadi error
+
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
-
-
-# def get_post_by_account_id(account_id):
-#     session = Session()
-#     try:
-        
-#         posts = (
-#             session.query(Posts)
-#             .join(Posts.user_details)  
-#             .filter(UserDetails.account_id == account_id)  
-#             .all()
-#         )
-
-#         if not posts:
-#             return {
-#                 "data": {},
-#                 "status": {
-#                     "code": 404,
-#                     "message": "Post not found"
-#                 }
-#             }
-
-#         data = [post.serialize() for post in posts]
-#         return {
-#             "data": data,
-#             "status": {
-#                 "code": 200,
-#                 "message": "Post entries retrieved successfully"
-#             }
-#         }
-    
-#     except Exception as e:
-#         return {
-#             "data": {},
-#             "status": {
-#                 "code": 500,
-#                 "message": f"Server error: {e}"
-#             }
-#         }
-    
-#     finally:
-#         session.close()
 
 def get_post_by_account_id(account_id):
     session = Session()
