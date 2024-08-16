@@ -1,4 +1,3 @@
-from flask import Blueprint, request
 from app.models.role import Role
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response

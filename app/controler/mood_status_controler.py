@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import  jsonify
 from app.models.mood_status import MoodStatus
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
@@ -26,7 +26,6 @@ def get_mood_status_by_status_id(status_id):
         data = mood_status.serialize()  
 
         return api_response(status_code=200, message="Specified mood status retrieved successfully", data=data)
-
     
     except Exception as e:
         print(f"General error: {e}")
@@ -34,8 +33,6 @@ def get_mood_status_by_status_id(status_id):
     
     finally:
         session.close()
-
-
 
 def get_mood_status_by_status_id(status_id):
     session = Session()

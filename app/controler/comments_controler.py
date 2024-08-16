@@ -11,9 +11,6 @@ from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 from sqlalchemy.orm import joinedload
 
-from sqlalchemy.orm import joinedload
-
-
 def get_all_comments():
     session = Session()
     try:

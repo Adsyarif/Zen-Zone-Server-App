@@ -68,8 +68,6 @@ def login_account():
     try:
         account = session.query(Account).filter(Account.email == email).first()
 
-        
-
         if account == None:
             return api_response(
                 status_code = 404,

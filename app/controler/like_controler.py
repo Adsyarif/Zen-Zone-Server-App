@@ -2,8 +2,6 @@ from flask import  jsonify
 from app.models.like import Like
 from app.models.posts import Posts
 from app.models.user_details import UserDetails
-from app.models.posts import Posts
-from app.models.user_details import UserDetails
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
 from sqlalchemy.orm import joinedload
@@ -206,8 +204,6 @@ def do_like_post(account_id, post_id):
         if not user_query:
             return jsonify({'message': 'User not found'}), 400
         
-        # like_query = session.query(Like).filter(Like.user_id == user_id, Like.post_id == post_id).first()
-        
         like_query = (
             session.query(Like)
             .join(UserDetails)
@@ -253,7 +249,6 @@ def get_like_by_account_id(account_id):
                 message="User has no likes yet or user does not exist",
                 data=[]
             )
-
 
         likes = session.query(Like).filter(Like.user_id == user_query.user_id).all()
         data = [like.serialize() for like in likes]
