@@ -21,15 +21,15 @@ This project serves as the backend for Zen-Zone, handling all the data managemen
 
 ## ERD
 
-<!-- erd tinggal di edit dan di up -->
-
-![Entity-Relationship-Diagram](./app/assets/erd.png)
+![Entity-Relationship-Diagram](./app/assets/image.png)
 
 ## Prerequisites
 
 - Python 3.10
 - Poetry
 - Flask
+- Flask_jwt_extended
+- Pydantic
 - Supabase account and project setup
 
 ## Installation
@@ -88,9 +88,7 @@ JWT_SECRET_KEY=your_secret_key
 
 ## API Documentation
 
-<!-- ganti link ke documentasi -->
-
-[Zen-Zone API Documentation](https://documenter.getpostman.com/view/32144902/2sA3e1AV8d)
+[Zen-Zone API Documentation](https://documenter.getpostman.com/view/32965341/2sA3s7iUBY)
 
 ## Deployment
 
