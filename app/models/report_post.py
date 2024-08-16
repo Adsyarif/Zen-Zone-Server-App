@@ -22,12 +22,13 @@ class ReportPost(Base):
             'report_category_id': self.report_category.serialize() if self.report_category else None,
             'report_content': self.report_content,
             'post_id': self.post_id,
-            'user_id': self.user_id,
-            'account_id':self.user_details.account_id
+            'user_id': self.user_id
+            
         }
         if full:
             data.update({
-                'created_at': self.created_at
+                'created_at': self.created_at,
+                'account_id':self.user_details.account_id
             })
         return data
     

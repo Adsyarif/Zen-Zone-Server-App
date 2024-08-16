@@ -21,9 +21,12 @@ class Like(Base):
             'account_id': self.user_details.account_id
         }
         if full:
+            post_user_name = self.posts.user_details.user_name if self.posts and self.posts.user_details else None
             data.update({
                 'created_at': self.created_at,
-                'user_name':self.user_details.user_name
+                'user_name':self.user_details.user_name,
+                'content': self.posts.content if self.posts else None,
+                'post_user_name': post_user_name 
             })
         return data
     

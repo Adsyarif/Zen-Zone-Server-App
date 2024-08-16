@@ -18,11 +18,15 @@ class Bookmarks(Base):
             'bookmark_id': self.bookmark_id,
             'post_id': self.post_id,
             'user_id': self.user_id,
-            'account_id': self.user_details.account_id
+            'account_id': self.user_details.account_id,
+            'user_name': self.user_details.user_name
         }
         if full:
+            post_user_name = self.posts.user_details.user_name if self.posts and self.posts.user_details else None
             data.update({
-                'created_at': self.created_at
+                'created_at': self.created_at,
+                'content': self.posts.content if self.posts else None,
+                'post_user_name': post_user_name    
             })
         return data
     
