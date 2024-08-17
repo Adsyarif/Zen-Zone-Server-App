@@ -35,12 +35,10 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock* /app/
+COPY . .
 
 RUN poetry install
 
-COPY . /app
-
 RUN poetry run flask 
 
-CMD ["/app/.venv/bin/gunicorn", "-w 4", "-b 0.0.0.0:5000", "app:app"]
+CMD [".venv/bin/gunicorn", "-w 4", "-b 0.0.0.0:5000", "app:app"]
