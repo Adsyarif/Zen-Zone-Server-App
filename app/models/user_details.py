@@ -24,6 +24,7 @@ class UserDetails(Base):
     comments = relationship("Comments", back_populates="user_details")
     report_post = relationship("ReportPost", back_populates="user_details")
     report_comment = relationship("ReportComment", back_populates="user_details")
+    list_schedule = relationship("ListSchedule", back_populates="user_details")
 
     def serialize(self, full=True):
         data = {
