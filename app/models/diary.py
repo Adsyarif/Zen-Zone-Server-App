@@ -1,6 +1,6 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import String, Integer, ForeignKey, DateTime, func
+from sqlalchemy import String, Integer, ForeignKey, DateTime, func, Boolean
 
 class Diary(Base):
     __tablename__ = "diary"
@@ -12,6 +12,7 @@ class Diary(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
+    share = mapped_column(Boolean, server_default="false")
 
     account = relationship("Account", back_populates="diary")
     mood_status = relationship("MoodStatus", back_populates="diary")
@@ -25,6 +26,7 @@ class Diary(Base):
             'content': self.content,
             'value': self.mood_status.value,
             'created_at': self.created_at,
+            'share': self.share
         }
         if full:
             data.update ({
