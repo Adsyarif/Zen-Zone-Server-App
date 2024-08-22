@@ -15,6 +15,7 @@ class Account(Base):
     role = relationship("Role", back_populates="account")
     diary = relationship("Diary", back_populates="account")
     user_details = relationship("UserDetails", back_populates="account")
+    counselor_details = relationship("CounselorDetail", back_populates="account")
 
     def serialize(self, full=True):
         data = {
