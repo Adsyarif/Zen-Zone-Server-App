@@ -18,6 +18,7 @@ from app.routes.mood_category_route import mood_category_routes
 from app.routes.mood_status_route import mood_status_routes
 from app.routes.mood_tracker_route import mood_tracker_routes
 from app.routes.like_route import like_routes
+from app.routes.list_schedule_route import list_scedule_routes
 from flask_cors import CORS
 
 
@@ -49,6 +50,7 @@ app.register_blueprint(mood_category_routes)
 app.register_blueprint(mood_status_routes)
 app.register_blueprint(mood_tracker_routes)
 app.register_blueprint(like_routes)
+app.register_blueprint(list_scedule_routes)
 
 if __name__ == "__main__":
     app.run()

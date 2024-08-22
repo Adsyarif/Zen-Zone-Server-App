@@ -141,3 +141,30 @@ def soft_delete_diary_entry_by_id(account_id, diary_id):
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
+def share_diary(account_id, diary_id):
+    session = Session()
+    try:
+        share = request.json.get("share")
+
+        if share is None:
+            return api_response(status_code=400, message="The 'share' field is required", data={})
+
+        diary_entry = session.query(Diary).filter(
+            Diary.account_id == account_id,
+            Diary.diary_id == diary_id
+        ).first()
+
+        if not diary_entry:
+            return api_response(status_code=403, message="Unauthorized: You are not allowed to edit this diary entry", data={})
+
+        diary_entry.share = share
+        session.commit()
+
+        return api_response(status_code=200, message="Diary updated successfully", data=diary_entry.serialize(full=False))
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
