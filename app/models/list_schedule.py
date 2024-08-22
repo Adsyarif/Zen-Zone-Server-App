@@ -9,13 +9,13 @@ class ListSchedule(Base):
     available_from = mapped_column(DateTime(timezone=True), nullable=False)
     available_to = mapped_column(DateTime(timezone=True), nullable=False)
     booked_by_account_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
-    counselor_id = mapped_column(Integer, ForeignKey('counselor_detail.counselor_id', ondelete="CASCADE"))
+    counselor_id = mapped_column(Integer, ForeignKey('counselor_details.counselor_id', ondelete="CASCADE"))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user_details = relationship("UserDetails", back_populates="list_schedule")
-    counselor_details = relationship("CounselorDetail", back_populates="list_schedule")
+    counselor_details = relationship("CounselorDetail", back_populates="list_schedules")
 
     def serialize(self, full=True):
         data = {
