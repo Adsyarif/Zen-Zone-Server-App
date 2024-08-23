@@ -14,7 +14,7 @@ class Articles(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), nullable=True)
 
-    article_content = relationship("ArticleContent", back_populates="articles")
+    article_content = relationship("ArticleContent", back_populates="articles", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
