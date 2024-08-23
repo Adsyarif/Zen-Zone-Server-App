@@ -8,8 +8,6 @@ class Gender(Base):
     gender_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     name = mapped_column(String(255), nullable=False)
 
-    user_details = relationship("User_details", back_populates="gender")
-
     user_details = relationship("UserDetails", back_populates="gender")
     counselor_details = relationship("CounselorDetail", back_populates="gender")
 
