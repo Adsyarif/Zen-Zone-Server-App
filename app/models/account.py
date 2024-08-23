@@ -2,6 +2,7 @@ from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 import bcrypt
+from app.models.review_counselor import ReviewCounselor
 
 class Account(Base):
     __tablename__ = "account"
@@ -16,6 +17,9 @@ class Account(Base):
     diary = relationship("Diary", back_populates="account")
     user_details = relationship("UserDetails", back_populates="account")
     counselor_details = relationship("CounselorDetail", back_populates="account")
+
+    review_as_counselor = relationship("ReviewCounselor", back_populates="counselor", foreign_keys=[ReviewCounselor.account_id_counselor])
+    review_as_user = relationship("ReviewCounselor", back_populates="account", foreign_keys=[ReviewCounselor.account_id])
 
     def serialize(self, full=True):
         data = {

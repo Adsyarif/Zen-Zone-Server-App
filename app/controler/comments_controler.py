@@ -1,10 +1,6 @@
 from flask import  request, jsonify
 from sqlalchemy import func
-from flask import  request, jsonify
-from sqlalchemy import func
 from app.models.comments import Comments
-from app.models.posts import Posts
-from app.models.user_details import UserDetails
 from app.models.posts import Posts
 from app.models.user_details import UserDetails
 from app.connector.sql_connector import Session
