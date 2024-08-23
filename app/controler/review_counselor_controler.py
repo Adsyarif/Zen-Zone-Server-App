@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request
 from sqlalchemy import func
 from app.models.review_counselor import ReviewCounselor
 from app.models.user_details import UserDetails
