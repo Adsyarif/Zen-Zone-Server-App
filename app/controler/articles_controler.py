@@ -79,6 +79,35 @@ def create_article():
     finally:
         session.close()
 
+def edit_article(article_id):
+    session = Session()
+    try:
+        data = request.get_json()
+
+        article_to_edit = session.query(Articles).filter(Articles.article_id == article_id).first()
+
+        if not article_to_edit:
+            return api_response(status_code=404, message="Article not found", data={})
+
+        if 'title' in data:
+            article_to_edit.title = data['title']
+        if 'author' in data:
+            article_to_edit.author = data['author']
+        if 'summary' in data:
+            article_to_edit.summary = data['summary']
+        if 'tag' in data:
+            article_to_edit.tag = data['tag']
+
+        session.commit()
+        return api_response(status_code=200, message="Article updated successfully", data=article_to_edit.serialize())
+    
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    
+    finally:
+        session.close()
+
 def delete_article(article_id):
     session = Session()
 
