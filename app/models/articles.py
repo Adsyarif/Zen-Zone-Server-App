@@ -12,6 +12,7 @@ class Articles(Base):
     summary = mapped_column(String, nullable=False)
     tag = mapped_column(String, nullable=False)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), nullable=True)
 
     article_content = relationship("ArticleContent", back_populates="articles", cascade="all, delete-orphan")
@@ -24,6 +25,7 @@ class Articles(Base):
             'summary': self.summary,
             'tag': self.tag,
             'created_at': self.created_at,
+            'updated_at': self.updated_at,
             'deleted_at': self.deleted_at
         }
     
