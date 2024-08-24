@@ -8,11 +8,13 @@ class Posts(Base):
 
     post_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id = mapped_column(Integer, ForeignKey('user_details.user_id', ondelete="CASCADE"))
+    counselor_id = mapped_column(Integer, ForeignKey('counselor_details.counselor_id', ondelete="CASCADE"))
     content = mapped_column(String)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user_details = relationship("UserDetails", back_populates="posts")
+    counselor_details = relationship("CounselorDetail", back_populates="posts")
     bookmarks = relationship("Bookmarks", back_populates="posts")
     like = relationship("Like", back_populates="posts")
     comments = relationship("Comments", back_populates="posts")
@@ -22,16 +24,29 @@ class Posts(Base):
         data = {
             'post_id': self.post_id,
             'user_id': self.user_id,
+            'counselor_id': self.counselor_id,
             'content': self.content,
-            'created_at': self.created_at,
-            'user_name': self.user_details.user_name,
-            'account_id': self.user_details.account_id,
+            'created_at': self.created_at
         }
+
+        if self.user_details:
+            data.update({
+                'user_name': self.user_details.user_name,
+                'account_id': self.user_details.account_id,
+            })
+        elif self.counselor_details:
+            data.update({
+                'user_name': self.counselor_details.user_name,
+                'account_id': self.counselor_details.account_id,
+            })
+        
         if full:
             data.update({
                 'deleted_at': self.deleted_at,
             })
+
         return data
+
 
     def __repr__(self):
         return f'<Posts {self.post_id}>'

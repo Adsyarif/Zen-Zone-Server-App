@@ -7,6 +7,7 @@ from app.models.bookmarks import Bookmarks
 from app.models.like import Like
 from app.models.comments import Comments
 from app.models.user_details import UserDetails
+from app.models.counselor_detail import CounselorDetail
 from sqlalchemy.orm import joinedload
 
 def get_all_post():
@@ -89,13 +90,24 @@ def create_post(account_id):
             return api_response(status_code=400, message="Missing content", data={})
 
         user = session.query(UserDetails).filter_by(account_id=account_id).first()
-        if user is None:
-            return api_response(status_code=404, message="User not found", data={})
+        counselor = session.query(CounselorDetail).filter_by(account_id=account_id).first()
 
-        new_post = Posts(
-            user_id=session.query(UserDetails.user_id).filter(UserDetails.account_id == account_id).scalar(),
-            content=content
+        if user is None and counselor is None:
+            return api_response(status_code=404, message="User or Counselor not found", data={})
+
+        if user:
+            user_id = user.user_id
+            new_post = Posts(
+                user_id=user_id,
+                content=content
             )
+        else:
+            counselor_id = counselor.counselor_id
+            new_post = Posts(
+                counselor_id=counselor_id,
+                content=content
+            )
+
         session.add(new_post)
         session.commit()
 
@@ -107,6 +119,7 @@ def create_post(account_id):
     
     finally:
         session.close()
+
 
 
 def soft_delete_post(post_id):
