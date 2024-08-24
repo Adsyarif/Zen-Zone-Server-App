@@ -14,6 +14,7 @@ class ReviewCounselor(Base):
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.null())
     account_id = mapped_column(Integer, ForeignKey('account.account_id', ondelete="CASCADE"))
     account_id_counselor = mapped_column(Integer, ForeignKey('account.account_id', ondelete="CASCADE"))
+    rating = mapped_column(Integer, nullable=True)
 
     account = relationship("Account", back_populates="review_as_user", foreign_keys=[account_id])
     counselor = relationship("Account", back_populates="review_as_counselor", foreign_keys=[account_id_counselor])
@@ -25,6 +26,7 @@ class ReviewCounselor(Base):
             'created_at': self.created_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None,
             'account_id': self.account_id,
             'account_id_counselor': self.account_id_counselor,
+            'rating': self.rating,
         }
         if full:
             data.update({
