@@ -2,6 +2,9 @@ from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import String, Integer, ForeignKey, DateTime, func, Boolean
 
+from datetime import timezone, timedelta
+
+JAKARTA_TZ = timezone(timedelta(hours=7))
 class Diary(Base):
     __tablename__ = "diary"
 
@@ -25,14 +28,13 @@ class Diary(Base):
             'mood_status_id': self.mood_status.serialize() if self.mood_status else None,
             'content': self.content,
             'value': self.mood_status.value,
-            'created_at': self.created_at,
+            'created_at': self.created_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None,
             'share': self.share
         }
         if full:
             data.update ({
-                'created_at': self.created_at,
-                'updated_at': self.updated_at,
-                'deleted_at': self.deleted_at
+                'updated_at': self.updated_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.updated_at else None,
+                'deleted_at': self.deleted_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.deleted_at else None
             })
         return data
     

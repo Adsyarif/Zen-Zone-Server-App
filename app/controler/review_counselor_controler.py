@@ -56,9 +56,13 @@ def created_review_counselor(account_id, account_id_counselor):
     try:
         data = request.get_json()
         content = data.get('content')
+        rating = data.get('rating')
 
         if not content:
             return api_response(status_code=400, message="Missing content", data={})
+        
+        if not rating:
+            return api_response(status_code=400, message="Missing rating", data={})
 
         user_details = session.query(UserDetails).filter_by(account_id=account_id).first()
         if user_details is None:
@@ -74,7 +78,8 @@ def created_review_counselor(account_id, account_id_counselor):
         new_review = ReviewCounselor(
             account_id=account_id,
             account_id_counselor=account_id_counselor,
-            content=content
+            content=content,
+            rating=rating
         )
 
         session.add(new_review)
