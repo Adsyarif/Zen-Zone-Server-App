@@ -65,11 +65,12 @@ def create_article():
             title=data['title'],
             author=data['author'],
             summary=data['summary'],
-            tag=data['tag']
+            tag=data['tag'],
         )
 
         session.add(new_article)
         session.commit()
+        session.refresh(new_article)
         return api_response(status_code=201, message="Article created successfully", data=new_article.serialize())
     
     except Exception as e:
@@ -99,6 +100,7 @@ def edit_article(article_id):
             article_to_edit.tag = data['tag']
 
         session.commit()
+        session.refresh(article_to_edit)
         return api_response(status_code=200, message="Article updated successfully", data=article_to_edit.serialize())
     
     except Exception as e:
