@@ -1,6 +1,6 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import Integer, String, ForeignKey, DateTime, func
+from sqlalchemy import Integer, String, DECIMAL, ForeignKey, DateTime, func
 
 class CounselorDetail(Base):
     __tablename__ = "counselor_details"
@@ -13,6 +13,13 @@ class CounselorDetail(Base):
     phone_number = mapped_column(String(255), nullable=False, unique=True)
     certification = mapped_column(String(255), nullable=False, unique=True)
     profile_image = mapped_column(String(255), nullable=True)
+    price = mapped_column(DECIMAL(10,2), nullable=False)
+    # alumnus =
+    # practice_location =
+    # work_experiences =
+    # practice_license_status =
+
+
     gender_id = mapped_column(Integer, ForeignKey('gender.gender_id'))
     account_id = mapped_column(Integer, ForeignKey('account.account_id'))
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -31,6 +38,7 @@ class CounselorDetail(Base):
             'user_name': self.user_name,
             'phone_number': self.phone_number,
             'certification': self.certification,
+            'price': self.price,
 
             'gender_id': self.gender_id, #integer
             'account_id': self.account_id  #inetegr should not be serialize()?
