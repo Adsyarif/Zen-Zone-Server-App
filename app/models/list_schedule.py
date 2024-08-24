@@ -1,6 +1,6 @@
 from app.models.base import  Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import Integer, ForeignKey, DateTime, func
+from sqlalchemy import Integer, ForeignKey, DateTime, String , func
 
 class ListSchedule(Base):
     __tablename__ = "list_schedule"
@@ -13,7 +13,7 @@ class ListSchedule(Base):
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.now())
-
+    status = mapped_column(String, nullable=True)
     user_details = relationship("UserDetails", back_populates="list_schedule")
     counselor_details = relationship("CounselorDetail", back_populates="list_schedules")
 
@@ -24,7 +24,8 @@ class ListSchedule(Base):
             'available_to': self.available_to,
             'booked_by_account_id': self.booked_by_account_id,
             'counselor_id': self.counselor_id,
-            'created_at': self.created_at
+            'created_at': self.created_at,
+            'status': self.status
         } 
         if full:
             data.update({
