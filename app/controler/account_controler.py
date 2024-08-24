@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from app.models.account import Account
 from app.connector.sql_connector import Session
 from app.models.user_details import UserDetails
+from app.models.counselor_detail import CounselorDetail
 from app.utils.api_response import api_response
 from app.validations.account_validation import CreateAccount, LoginAccount
 from flask_jwt_extended import create_access_token
@@ -54,6 +55,12 @@ def get_user_profile_status(account_id):
     user_details = session.query(UserDetails).filter(UserDetails.account_id == account_id).first()
     return user_details is not None
 
+def get_counselor_profile_status(account_id):
+    session = Session()
+    ucounselor_details = session.query(CounselorDetail).filter(CounselorDetail.account_id == account_id).first()
+    return ucounselor_details is not None
+    
+
 def login_account():
     try:
         login_data = LoginAccount(**request.json)
@@ -81,15 +88,17 @@ def login_account():
                 data = {}
             )
         profile_incomplete = not get_user_profile_status(account.account_id)
+        counselor_incomplete = not get_counselor_profile_status(account.account_id)
         access_token = create_access_token(identity = account.account_id)
 
         return api_response(
             status_code=200,
             message="Login success",
             data={
-                "account": account.serialize(),
+                "account": account.serialize(True),
                 "access_token": access_token,
-                "profile_incomplete": profile_incomplete
+                "profile_incomplete": profile_incomplete,
+                "counselor_incomplete": counselor_incomplete,
             }
         )
     except Exception as e:
