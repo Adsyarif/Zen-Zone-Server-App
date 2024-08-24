@@ -1,5 +1,5 @@
 from flask import Blueprint
-from app.controler.list_schedule_controller import get_all_list_schedules, get_schedule_by_counselor_id, post_schedule_by_counselor_id, put_user_booked_by_account_id, put_counselor_reschedule_by_schedule_id, put_cancel_by_account_id, delete_schedule_by_counselor_id
+from app.controler.list_schedule_controller import get_all_list_schedules, get_schedule_by_counselor_id, post_schedule_by_counselor_id, put_user_booked_by_account_id, put_counselor_reschedule_by_schedule_id, put_cancel_by_account_id, put_update_status_by_counselor_id , delete_schedule_by_counselor_id
 
 list_scedule_routes = Blueprint('list_schedule', __name__)
 

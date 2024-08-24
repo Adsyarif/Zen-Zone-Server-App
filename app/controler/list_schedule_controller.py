@@ -89,6 +89,7 @@ def put_user_booked_by_account_id(account_id, schedule_id):
         
         schedule_query.booked_by_account_id = account_id
         schedule_query.updated_at = datetime.utcnow()
+        schedule_query.status = "UPCOMING"
         
         session.commit()
         
@@ -161,17 +162,38 @@ def put_counselor_reschedule_by_schedule_id(counselor_id, schedule_id):
     finally:
         session.close()
         
-def delete_schedule_by_counselor_id(counselor_id, schedule_id):
+def put_update_status_by_counselor_id(counselor_id, schedule_id):
     session = Session()
     try:
-        session_query = session.query(ListSchedule).filter(
+        schedule_query = session.query(ListSchedule).filter(
             ListSchedule.counselor_id == counselor_id,
             ListSchedule.schedule_id == schedule_id
         ).first()
-        if not session_query:
+        if not schedule_query:
+            return api_response(status_code=403, message="Status update not authorized", data={})
+        
+        schedule_query.status = "DONE"
+        schedule_query.updated_at = datetime.utcnow()
+        
+        session.commit()
+        return api_response(status_code=200, message="Status updated successfully", data=schedule_query.serialize(full=False))
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+        
+def delete_schedule_by_counselor_id(counselor_id, schedule_id):
+    session = Session()
+    try:
+        schedule_query = session.query(ListSchedule).filter(
+            ListSchedule.counselor_id == counselor_id,
+            ListSchedule.schedule_id == schedule_id
+        ).first()
+        if not schedule_query:
             return api_response(status_code=403, message="Schedule deletion not authorized", data={})
         
-        session.delete(session_query)
+        session.delete(schedule_query)
         session.commit()
         
         return api_response(status_code=200, message="Schedule successfully deleted", data={})
