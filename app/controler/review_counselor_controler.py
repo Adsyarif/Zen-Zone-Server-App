@@ -51,6 +51,51 @@ def get_all_review_counselor():
     finally:
         session.close()
 
+def get_review_counselor_id(account_id_counselor):
+    session = Session()
+    try:
+        reviews_counselor = session.query(ReviewCounselor).filter(
+            ReviewCounselor.account_id_counselor == account_id_counselor
+        ).options(
+            joinedload(ReviewCounselor.account).joinedload(Account.user_details),
+            joinedload(ReviewCounselor.counselor)
+        ).all()
+
+        data = []
+        for review in reviews_counselor:
+            serialized_review = review.serialize()
+
+            if review.account:
+                user_details = review.account.user_details
+                counselor_details = review.counselor.counselor_details 
+
+                if isinstance(user_details, list):
+                    user_details = user_details[0] if user_details else None
+                if isinstance(counselor_details, list):
+                    counselor_details = counselor_details[0] if counselor_details else None
+
+                serialized_review.update({
+                    'user_first_name': user_details.first_name if user_details else None,
+                    'user_last_name': user_details.last_name if user_details else None,
+                    'counselor_first_name': counselor_details.first_name if counselor_details else None,
+                    'counselor_last_name': counselor_details.last_name if counselor_details else None,
+                })
+            else:
+                serialized_review.update({
+                    'user_first_name': None,
+                    'user_last_name': None,
+                    'counselor_first_name': None,
+                    'counselor_last_name': None,
+                })
+
+            data.append(serialized_review)
+
+        return api_response(status_code=200, message="Review counselor retrieved successfully", data=data)
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+
 def created_review_counselor(account_id, account_id_counselor):
     session = Session()
     try:
