@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy import func
 from app.models.counselor_detail import CounselorDetail
 from app.connector.sql_connector import Session
@@ -40,9 +40,9 @@ def get_counselor_detail_by_id(counselor_id, account_id):
 
 def create_new_counselor_id(account_id):
     session = Session()
-    try:
+
+    try: 
         data = request.json
-         
         required_body_fields = [
              'first_name',
              'last_name',
@@ -51,6 +51,11 @@ def create_new_counselor_id(account_id):
              'phone_number',
              'certification',
              'price',
+             'alumnus',
+             'practice_location',
+             'year_of_experience',
+             'practice_license_status',
+
              'gender_id',
              'account_id'
         ]
@@ -62,6 +67,8 @@ def create_new_counselor_id(account_id):
                     message=f"{body_field} is required",
                     data={}
                 )
+
+
         account = session.query(Account).filter(Account.account_id == account_id).first()
         if not account:
             return api_response(
@@ -70,6 +77,16 @@ def create_new_counselor_id(account_id):
                 data={}
             )
         
+
+        existing_counselor_account = session.query(CounselorDetail).filter(CounselorDetail.account_id == account_id).first()
+        if existing_counselor_account:
+            return api_response(
+                status_code=400,
+                message="Account ID is already used by another counselor_id. Please use a different account_id",
+                data={}
+            )
+
+
         new_counselor_detail = CounselorDetail(
             account_id=account_id,
             first_name=data["first_name"],
@@ -79,6 +96,11 @@ def create_new_counselor_id(account_id):
             phone_number=data["phone_number"],
             certification=data["certification"],
             price=data["price"],
+            alumnus=data["alumnus"],
+            practice_location=data["practice_location"],
+            year_of_experience=data["year_of_experience"],
+            practice_license_status=data["practice_license_status"],
+
             gender_id=data["gender_id"]
         )
 
@@ -90,7 +112,7 @@ def create_new_counselor_id(account_id):
             message="New counselor detail created successfully",
             data=new_counselor_detail.serialize(full=False)
         )
-
+    
     except Exception as e:
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})
@@ -115,6 +137,11 @@ def update_counselor_detail_by_id(account_id, counselor_id):
         phone_number = request.json.get("phone_number")
         certification = request.json.get("certification")
         price = request.json.get("price")
+        alumnus = request.json.get("alumnus")
+        practice_location =  request.json.get("practice_location")
+        year_of_experience = request.json.get("year_of_experience")
+        practice_license_status = request.json.get("practice_license_status")
+
 
         counselor_to_edit.first_name = first_name
         counselor_to_edit.last_name = last_name
@@ -123,6 +150,10 @@ def update_counselor_detail_by_id(account_id, counselor_id):
         counselor_to_edit.phone_number = phone_number
         counselor_to_edit.certification = certification
         counselor_to_edit.price = price
+        counselor_to_edit.alumnus = alumnus
+        counselor_to_edit.practice_location = practice_location
+        counselor_to_edit.year_of_experience = year_of_experience
+        counselor_to_edit.practice_license_status = practice_license_status
 
         session.commit()
         return api_response(status_code=200, message="Counselor data updated successfully", data=counselor_to_edit.serialize(full=True))
