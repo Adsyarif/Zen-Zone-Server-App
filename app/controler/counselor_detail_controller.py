@@ -1,5 +1,6 @@
 from flask import request
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 from app.models.counselor_detail import CounselorDetail
 from app.connector.sql_connector import Session
 from app.utils.api_response import api_response
@@ -16,7 +17,6 @@ def get_all_counselor_detail():
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
-
 
 def get_counselor_detail_by_id(counselor_id, account_id):
     session = Session()
@@ -42,7 +42,6 @@ def create_new_counselor_id(account_id):
     session = Session()
     try:
         data = request.json
-         
         required_body_fields = [
              'first_name',
              'last_name',
@@ -51,6 +50,11 @@ def create_new_counselor_id(account_id):
              'phone_number',
              'certification',
              'price',
+             'alumnus',
+             'practice_location',
+             'year_of_experience',
+             'practice_license_status',
+
              'gender_id',
              'account_id'
         ]
@@ -79,6 +83,11 @@ def create_new_counselor_id(account_id):
             phone_number=data["phone_number"],
             certification=data["certification"],
             price=data["price"],
+            alumnus=data["alumnus"],
+            practice_location=data["practice_location"],
+            year_of_experience=data["year_of_experience"],
+            practice_license_status=data["practice_license_status"],
+
             gender_id=data["gender_id"]
         )
 
@@ -115,6 +124,11 @@ def update_counselor_detail_by_id(account_id, counselor_id):
         phone_number = request.json.get("phone_number")
         certification = request.json.get("certification")
         price = request.json.get("price")
+        alumnus = request.json.get("alumnus")
+        practice_location =  request.json.get("practice_location")
+        year_of_experience = request.json.get("year_of_experience")
+        practice_license_status = request.json.get("practice_license_status")
+
 
         counselor_to_edit.first_name = first_name
         counselor_to_edit.last_name = last_name
@@ -123,6 +137,10 @@ def update_counselor_detail_by_id(account_id, counselor_id):
         counselor_to_edit.phone_number = phone_number
         counselor_to_edit.certification = certification
         counselor_to_edit.price = price
+        counselor_to_edit.alumnus = alumnus
+        counselor_to_edit.practice_location = practice_location
+        counselor_to_edit.year_of_experience = year_of_experience
+        counselor_to_edit.practice_license_status = practice_license_status
 
         session.commit()
         return api_response(status_code=200, message="Counselor data updated successfully", data=counselor_to_edit.serialize(full=True))
@@ -131,5 +149,86 @@ def update_counselor_detail_by_id(account_id, counselor_id):
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     
+    finally:
+        session.close()
+
+def update_counselor_details(account_id):
+    session = Session()
+
+    try:
+        data = request.json
+        counselor_details = session.query(CounselorDetail).join(CounselorDetail.account).filter(CounselorDetail.account_id == account_id).first()
+        
+        if not counselor_details:
+            return api_response(
+                status_code=404,
+                message="Counselor not found",
+                data={}
+            )
+        counselor_details.first_name = data.get("first_name")
+        counselor_details.last_name = data.get("last_name")
+        counselor_details.title = data.get("title")
+        counselor_details.user_name = data.get("user_name")
+        counselor_details.phone_number = data.get("phone_number")
+        counselor_details.certification = data.get("certification")
+        counselor_details.price = data.get("price")
+        counselor_details.alumnus = data.get("alumnus")
+        counselor_details.practice_location =  data.get("practice_location")
+        counselor_details.year_of_experience = data.get("year_of_experience")
+        counselor_details.practice_license_status = data.get("practice_license_status")
+
+        session.commit()
+
+
+        return api_response(
+            status_code=200,
+            message="Counselor details updated successfully",
+            data=counselor_details.serialize(full=False)
+        )
+        
+    except Exception as e:
+        session.rollback() 
+        print(f"Error occurred while updating counselor details: {e}")
+        return api_response(
+            status_code=500,
+            message=f"Server error: {str(e)}",
+            data={}
+        )
+    finally:
+        session.close()
+
+def get_counselor_details_id_counselor(account_id):
+    session = Session()
+
+    try:
+        account = session.query(Account).options(joinedload(Account.counselor_details)).filter(Account.account_id == account_id).first()
+        if not account:
+            return api_response(
+                status_code=404,
+                message="Counselor not found",
+                data={}
+            )
+        
+        account_data = {
+            "email": account.email
+        }
+
+        counselor_details_data = [counselor_details.serialize(full=False) for counselor_details in account.counselor_details]
+
+        return api_response(
+            status_code=200,
+            message="User and About User data retrieved successfully",
+            data={
+                "account": account_data,
+                "counselor_details": counselor_details_data
+            }
+        )
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return api_response(
+            status_code=500,
+            message=f"Server error: {str(e)}",
+            data={}
+        )
     finally:
         session.close()
