@@ -2,6 +2,7 @@ from app.models.list_schedule import ListSchedule
 from app.connector.sql_connector import Session
 from app.models.user_details import UserDetails
 from app.models.counselor_detail import CounselorDetail
+from app.models.account import Account
 from app.utils.api_response import api_response
 from flask import  request, jsonify
 from datetime import datetime
@@ -10,32 +11,96 @@ from datetime import datetime
 def get_all_list_schedules():
     session = Session()
     try:
-        list_schedule = session.query(ListSchedule).all()
-        if not list_schedule:
+        list_schedules = session.query(ListSchedule).join(
+            CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
+        ).all()
+
+        if not list_schedules:
             return api_response(status_code=404, message="No list schedule found", data={})
+
+        data = []
+        for list_schedule in list_schedules:
+            list_schedule_data = list_schedule.serialize()
+            
+            counselor_detail = session.query(CounselorDetail).filter(
+                CounselorDetail.account_id == list_schedule.counselor_id
+            ).first()
+
+            if counselor_detail:
+                list_schedule_data['counselor_detail'] = counselor_detail.serialize(full=False)
+            
+            data.append(list_schedule_data)
         
-        data = [list_schedule.serialize() for list_schedule in list_schedule]
         return api_response(status_code=200, message="List schedule retrieved successfully", data=data)
+
     except Exception as e:
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
         
 def get_schedule_by_counselor_id(counselor_id):
     session = Session()
     try:
-        schedule_query = session.query(ListSchedule).filter(ListSchedule.counselor_id == counselor_id).all()
-        
-        if not schedule_query:
+        schedules = session.query(ListSchedule).join(
+            CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
+        ).filter(ListSchedule.counselor_id == counselor_id).all()
+
+        if not schedules:
             return api_response(status_code=400, message="No schedule found", data={})
-        data = [schedule_query.serialize() for schedule_query in schedule_query]
-        
+
+        data = []
+        for schedule in schedules:
+            schedule_data = schedule.serialize()
+            
+            counselor_detail = session.query(CounselorDetail).filter(
+                CounselorDetail.account_id == schedule.counselor_id
+            ).first()
+
+            if counselor_detail:
+                schedule_data['counselor_detail'] = counselor_detail.serialize(full=False)
+            
+            data.append(schedule_data)
+
         return api_response(status_code=200, message="List schedule by counselor_id retrieved successfully", data=data)
     
     except Exception as e:
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
+
+
+def get_schedule_by_booked_by_account_id(booked_by_account_id):
+    session = Session()
+    try:
+        schedules = session.query(ListSchedule).join(
+            CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
+        ).filter(ListSchedule.booked_by_account_id == booked_by_account_id).all()
+        
+        if not schedules:
+            return api_response(status_code=400, message="No schedules found for this account", data={})
+        
+        data = []
+        for schedule in schedules:
+            schedule_data = schedule.serialize()
+            counselor_detail = session.query(CounselorDetail).filter(
+                CounselorDetail.account_id == schedule.counselor_id
+            ).first()
+
+            if counselor_detail:
+                schedule_data['counselor_detail'] = counselor_detail.serialize(full=False)
+            
+            data.append(schedule_data)
+        
+        return api_response(status_code=200, message="List of schedules retrieved successfully", data=data)
+    
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+
+
 
 def post_schedule_by_counselor_id(counselor_id):
     session = Session()

@@ -3,6 +3,7 @@ from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 import bcrypt
 from app.models.review_counselor import ReviewCounselor
+from app.models.list_schedule import ListSchedule
 
 class Account(Base):
     __tablename__ = "account"
@@ -20,6 +21,9 @@ class Account(Base):
 
     review_as_counselor = relationship("ReviewCounselor", back_populates="counselor", foreign_keys=[ReviewCounselor.account_id_counselor])
     review_as_user = relationship("ReviewCounselor", back_populates="account", foreign_keys=[ReviewCounselor.account_id])
+    
+    booked_schedules = relationship("ListSchedule", back_populates="booked_by_account", foreign_keys=[ListSchedule.booked_by_account_id])
+    counselor_schedules = relationship("ListSchedule", back_populates="counselor", foreign_keys=[ListSchedule.counselor_id])
 
     def serialize(self, full=True):
         data = {
@@ -29,7 +33,7 @@ class Account(Base):
             'role_id': self.role.serialize() if self.role else None
         }
         if full:
-            data.update ({
+            data.update({
                 'created_at': self.created_at
             })
         return data
