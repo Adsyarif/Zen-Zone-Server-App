@@ -44,6 +44,8 @@ def get_schedule_by_counselor_id(counselor_id):
     try:
         schedules = session.query(ListSchedule).join(
             CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
+        ).outerjoin(
+            UserDetails, ListSchedule.booked_by_account_id == UserDetails.account_id
         ).filter(ListSchedule.counselor_id == counselor_id).all()
 
         if not schedules:
@@ -52,7 +54,6 @@ def get_schedule_by_counselor_id(counselor_id):
         data = []
         for schedule in schedules:
             schedule_data = schedule.serialize()
-            
             counselor_detail = session.query(CounselorDetail).filter(
                 CounselorDetail.account_id == schedule.counselor_id
             ).first()
@@ -60,6 +61,16 @@ def get_schedule_by_counselor_id(counselor_id):
             if counselor_detail:
                 schedule_data['counselor_detail'] = counselor_detail.serialize(full=False)
             
+            user_details = session.query(UserDetails).filter(
+                UserDetails.account_id == schedule.booked_by_account_id
+            ).first()
+            
+            if user_details:
+                schedule_data['booked_by_user'] = {
+                    'first_name': user_details.first_name,
+                    'last_name': user_details.last_name,
+                }
+
             data.append(schedule_data)
 
         return api_response(status_code=200, message="List schedule by counselor_id retrieved successfully", data=data)
@@ -68,7 +79,6 @@ def get_schedule_by_counselor_id(counselor_id):
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
-
 
 
 def get_schedule_by_booked_by_account_id(booked_by_account_id):
