@@ -28,7 +28,7 @@ class CounselorDetail(Base):
 
     gender = relationship("Gender", back_populates="counselor_details")
     account = relationship("Account", back_populates="counselor_details")
-    list_schedules = relationship("ListSchedule", back_populates="counselor_details")
+   
 
     def serialize(self, full=True):
         data = {
