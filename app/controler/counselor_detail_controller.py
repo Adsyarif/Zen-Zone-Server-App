@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 from app.models.counselor_detail import CounselorDetail
@@ -40,7 +40,8 @@ def get_counselor_detail_by_id(counselor_id, account_id):
 
 def create_new_counselor_id(account_id):
     session = Session()
-    try:
+
+    try: 
         data = request.json
         required_body_fields = [
              'first_name',
@@ -66,6 +67,8 @@ def create_new_counselor_id(account_id):
                     message=f"{body_field} is required",
                     data={}
                 )
+
+
         account = session.query(Account).filter(Account.account_id == account_id).first()
         if not account:
             return api_response(
@@ -74,6 +77,16 @@ def create_new_counselor_id(account_id):
                 data={}
             )
         
+
+        existing_counselor_account = session.query(CounselorDetail).filter(CounselorDetail.account_id == account_id).first()
+        if existing_counselor_account:
+            return api_response(
+                status_code=400,
+                message="Account ID is already used by another counselor_id. Please use a different account_id",
+                data={}
+            )
+
+
         new_counselor_detail = CounselorDetail(
             account_id=account_id,
             first_name=data["first_name"],
@@ -99,7 +112,7 @@ def create_new_counselor_id(account_id):
             message="New counselor detail created successfully",
             data=new_counselor_detail.serialize(full=False)
         )
-
+    
     except Exception as e:
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})

@@ -1,6 +1,7 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import Integer, String, DECIMAL, ForeignKey, DateTime, ARRAY, Text, func
+from sqlalchemy import Integer, String, DECIMAL, ForeignKey, DateTime, ARRAY, Text, func
 
 class CounselorDetail(Base):
     __tablename__ = "counselor_details"
