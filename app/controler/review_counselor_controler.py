@@ -173,8 +173,48 @@ def soft_delete_review_counselor(review_counselor_id):
         session.close()
 
         
+def get_count_all_rating_total_by_counselor_id(account_id_counselor):
+    session = Session()
+    try:
+        how_many_ratings = session.query(func.count(ReviewCounselor.rating)).filter(
+            ReviewCounselor.account_id_counselor == account_id_counselor,
+            ReviewCounselor.deleted_at == None
+        ).scalar()
 
+        return api_response(
+            status_code=200,
+            message="Total ratings retrieved successfully",
+            data={"Total ratings count = ": how_many_ratings}
+        )
+    
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message=f"server error: {e}",
+            data={},
+        )
+    finally:
+        session.close()
 
+def get_average_rating_by_counselor_id(account_id_counselor):
+    session = Session()
+    try:
+        average_ratings = session.query(func.avg(ReviewCounselor.rating)).filter(
+            ReviewCounselor.account_id_counselor == account_id_counselor,
+            ReviewCounselor.deleted_at == None
+        ).scalar()
 
-
-
+        return api_response(
+            status_code=200,
+            message="Total ratings retrieved successfully",
+            data={"Average of ratings = ": average_ratings}
+        )
+    
+    except Exception as e:
+        return api_response(
+            status_code=500,
+            message= f"server error: {e}",
+            data={}
+        )
+    finally:
+        session.close()
