@@ -55,9 +55,7 @@ def create_new_counselor_id(account_id):
              'practice_location',
              'year_of_experience',
              'practice_license_status',
-
              'gender_id',
-             'account_id'
         ]
 
         for body_field in required_body_fields:
@@ -88,7 +86,7 @@ def create_new_counselor_id(account_id):
 
 
         new_counselor_detail = CounselorDetail(
-            account_id=account_id,
+            account_id = account_id,
             first_name=data["first_name"],
             last_name=data["last_name"],
             title=data["title"],
@@ -100,7 +98,6 @@ def create_new_counselor_id(account_id):
             practice_location=data["practice_location"],
             year_of_experience=data["year_of_experience"],
             practice_license_status=data["practice_license_status"],
-
             gender_id=data["gender_id"]
         )
 

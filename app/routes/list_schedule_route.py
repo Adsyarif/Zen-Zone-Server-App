@@ -22,5 +22,5 @@ list_scedule_routes.route("/list_schedule/cancel/<int:account_id>/<int:schedule_
 list_scedule_routes.route("/list_schedule/reschedule/<int:counselor_id>/<int:schedule_id>", methods=["PUT"])(put_counselor_reschedule_by_schedule_id)
 list_scedule_routes.route("/list_schedule/counselor/delete/<int:counselor_id>/<int:schedule_id>", methods=["DELETE"])(delete_schedule_by_counselor_id)
 
-list_scedule_routes.route("/list_schedule/user/<int:booked_by_account_id>/", methods=["GET"])(get_schedule_by_booked_by_account_id)
+list_scedule_routes.route("/list_schedule/user/<int:booked_by_account_id>", methods=["GET"])(get_schedule_by_booked_by_account_id)
 list_scedule_routes.route("/list_schedule/status/<int:counselor_id>/<int:schedule_id>", methods=["PUT"])(mark_schedule_as_done)
