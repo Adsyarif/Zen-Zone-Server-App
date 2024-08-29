@@ -13,7 +13,9 @@ class MoodTracker(Base):
     def serialize(self):
         return {
             'mood_tracker_id': self.mood_tracker_id,
-            'diary_id': self.diary_id
+            'diary_id': self.diary_id,
+            'account_id': self.diary.account_id,
+            'status_id': self.diary.status_id
         }
     
     def __repr__(self):
