@@ -1,6 +1,8 @@
 from flask import request
 from app.models.diary import Diary
 from app.connector.sql_connector import Session
+from app.models.mood_category import MoodCategory
+from app.models.mood_status import MoodStatus
 from app.utils.api_response import api_response
 from sqlalchemy import func
 
@@ -166,5 +168,33 @@ def share_diary(account_id, diary_id):
     except Exception as e:
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})
+    finally:
+        session.close()
+
+
+def get_mood_summary_by_account_id(account_id: int):
+    session = Session()
+
+    try:
+        mood_summary = (
+            session.query(MoodCategory.name, func.count(Diary.diary_id))
+            .join(MoodStatus, MoodStatus.mood_category_id == MoodCategory.mood_category_id)
+            .join(Diary, Diary.mood_status_id == MoodStatus.status_id)
+            .filter(Diary.account_id == account_id)
+            .group_by(MoodCategory.name)
+            .all()
+        )
+
+        result = {category: count for category, count in mood_summary}
+
+        return api_response(
+            status_code=200, 
+            message="Mood summary retrieved successfully", 
+            data=result
+        )
+    
+    except Exception as e:
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+    
     finally:
         session.close()
