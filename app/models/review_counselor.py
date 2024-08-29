@@ -1,6 +1,6 @@
 from app.models.base import Base
 from sqlalchemy.orm import mapped_column, relationship
-from sqlalchemy import String, Integer, ForeignKey, DateTime, func
+from sqlalchemy import String, Integer, ForeignKey, DateTime, func, Float
 from datetime import timezone, timedelta
 
 JAKARTA_TZ = timezone(timedelta(hours=7))
@@ -14,7 +14,7 @@ class ReviewCounselor(Base):
     deleted_at = mapped_column(DateTime(timezone=True), server_default=func.null())
     account_id = mapped_column(Integer, ForeignKey('account.account_id', ondelete="CASCADE"))
     account_id_counselor = mapped_column(Integer, ForeignKey('account.account_id', ondelete="CASCADE"))
-    rating = mapped_column(Integer, nullable=True)
+    rating = mapped_column(Float, nullable=True)
 
     account = relationship("Account", back_populates="review_as_user", foreign_keys=[account_id])
     counselor = relationship("Account", back_populates="review_as_counselor", foreign_keys=[account_id_counselor])

@@ -15,9 +15,6 @@ def get_all_list_schedules():
             CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
         ).all()
 
-        if not list_schedules:
-            return api_response(status_code=404, message="No list schedule found", data={})
-
         data = []
         for list_schedule in list_schedules:
             list_schedule_data = list_schedule.serialize()
@@ -48,9 +45,7 @@ def get_schedule_by_counselor_id(counselor_id):
             UserDetails, ListSchedule.booked_by_account_id == UserDetails.account_id
         ).filter(ListSchedule.counselor_id == counselor_id).order_by(ListSchedule.available_from).all()
 
-        if not schedules:
-            return api_response(status_code=400, message="No schedule found", data={})
-
+        
         data = []
         for schedule in schedules:
             schedule_data = schedule.serialize()
