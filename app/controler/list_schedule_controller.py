@@ -293,3 +293,30 @@ def mark_schedule_as_done(counselor_id, schedule_id):
 
     finally:
         session.close()
+
+
+def mark_schedule_as_done_by_user(account_id, schedule_id, counselor_id):
+    session = Session()
+    try:
+        schedule_query = session.query(ListSchedule).filter(
+            ListSchedule.booked_by_account_id == account_id,
+            ListSchedule.schedule_id == schedule_id,
+            ListSchedule.counselor_id == counselor_id
+        ).first()
+
+        if not schedule_query:
+            return api_response(status_code=404, message="Schedule not found", data={})
+
+        schedule_query.status = "DONE"
+        session.commit()
+
+        return api_response(status_code=200, message="Schedule status updated to DONE", data=schedule_query.serialize())
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+
+    finally:
+        session.close()
+
+    
