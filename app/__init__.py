@@ -13,6 +13,7 @@ from app.routes.report_post_route import report_post_routes
 from app.routes.comment_route import comments_routes
 from app.routes.bookmarks_route import bookmarks_routes
 from app.routes.diary_route import diary_routes
+from app.routes.feedback_route import feedback_routes
 from app.routes.bookmarks_route import bookmarks_routes
 from app.routes.mood_category_route import mood_category_routes
 from app.routes.mood_status_route import mood_status_routes
@@ -51,6 +52,7 @@ app.register_blueprint(report_post_routes)
 app.register_blueprint(comments_routes)
 app.register_blueprint(bookmarks_routes)
 app.register_blueprint(diary_routes)
+app.register_blueprint(feedback_routes)
 app.register_blueprint(mood_category_routes)
 app.register_blueprint(mood_status_routes)
 app.register_blueprint(mood_tracker_routes)
