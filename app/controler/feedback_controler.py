@@ -26,8 +26,8 @@ def get_feedback_by_account_id(account_id):
 def get_all_feedback():
     session = Session()
     try:
-        Feedback = session.query(Feedback).all()
-        data = [Feedback.serialize() for Feedback in Feedback]
+        feedback = session.query(Feedback).all()
+        data = [feedback.serialize() for feedback in feedback]
         return api_response(status_code=200, message="Feedback retrieved successfully", data=data)
     except Exception as e:
         return api_response(status_code=500, message=f"Server error: {e}", data={})
@@ -59,12 +59,10 @@ def create_feedback_entry(account_id):
     session = Session()
     try:
         description = request.json.get("description")
-        created_at = request.json.get("created_at")
 
         new_feedback_entry = Feedback(
             account_id=account_id,
             description=description,
-            created_at=created_at,
         )
 
         session.add(new_feedback_entry)
@@ -93,7 +91,7 @@ def edit_feedback_by_id(account_id, feedback_id):
 
         feedback_entry_to_edit = session.query(Feedback).filter(
             Feedback.account_id == account_id,
-            Feedback.diary_id == feedback_id,
+            Feedback.feedback_id_id == feedback_id,
             ).first()
         if not feedback_entry_to_edit:
             return api_response(status_code=403, message="Unauthorized: You are not allowed to edit this feedback entry", data={})
@@ -111,23 +109,22 @@ def edit_feedback_by_id(account_id, feedback_id):
         session.close()
 
 
-def soft_delete_feedback_entry_by_id(account_id, feedback_id):
+def soft_delete_feedback_entry_by_id(feedback_id):
     session = Session()
     try:
         
         feedback_entry_to_delete = session.query(Feedback).filter(
             Feedback.feedback_id==feedback_id,
-            Feedback.account_id==account_id
         ).first()
         
         if not feedback_entry_to_delete:
-            return api_response(status_code=404, message="Diary entry not found", data={})
+            return api_response(status_code=404, message="Feedback entry not found", data={})
 
         
         feedback_entry_to_delete.deleted_at = func.now()
         session.commit()
 
-        return api_response(status_code=200, message="Diary soft deleted successfully", data=feedback_entry_to_delete.serialize(full=True))
+        return api_response(status_code=200, message="Feedback soft deleted successfully", data=feedback_entry_to_delete.serialize(full=True))
     except Exception as e:
         session.rollback()
         return api_response(status_code=500, message=f"Server error: {e}", data={})

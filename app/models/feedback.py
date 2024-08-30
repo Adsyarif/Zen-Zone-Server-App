@@ -20,7 +20,6 @@ class Feedback(Base):
         data = {
             'feedback_id': self.feedback_id,
             'account_id': self.account_id, 
-            'content': self.content,
             'description': self.description,
             'rating': self.rating,
             'created_at': self.created_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None
