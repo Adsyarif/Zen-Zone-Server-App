@@ -58,11 +58,24 @@ def get_feedback_by_id(account_id, feedback_id):
 def create_feedback_entry(account_id):
     session = Session()
     try:
+        username = request.json.get("username")  
         description = request.json.get("description")
+        rating = request.json.get("rating")
+        created_at = request.json.get("created_at")
+
+        if not username:
+            return api_response(status_code=400, message="Username content is required", data={})
+        if not description:
+            return api_response(status_code=400, message="Description is required", data={})
+        if not rating:
+            return api_response(status_code=400, message="Rating is required", data={})
 
         new_feedback_entry = Feedback(
             account_id=account_id,
+            username=username, 
             description=description,
+            rating=rating,
+            created_at=created_at,
         )
 
         session.add(new_feedback_entry)
@@ -74,6 +87,7 @@ def create_feedback_entry(account_id):
         return api_response(status_code=500, message=f"Server error: {e}", data={})
     finally:
         session.close()
+
 
 
 
