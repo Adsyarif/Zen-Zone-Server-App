@@ -204,17 +204,20 @@ def get_average_rating_by_counselor_id(account_id_counselor):
             ReviewCounselor.deleted_at == None
         ).scalar()
 
+        average_ratings_int = float(average_ratings) if average_ratings is not None else 0
+
         return api_response(
             status_code=200,
             message="Total ratings retrieved successfully",
-            data={"Average of ratings = ": average_ratings}
+            data={"average_ratings": average_ratings_int}
         )
     
     except Exception as e:
         return api_response(
             status_code=500,
-            message= f"server error: {e}",
+            message=f"Server error: {e}",
             data={}
         )
     finally:
         session.close()
+

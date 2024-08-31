@@ -15,9 +15,6 @@ def get_all_list_schedules():
             CounselorDetail, ListSchedule.counselor_id == CounselorDetail.account_id
         ).all()
 
-        if not list_schedules:
-            return api_response(status_code=404, message="No list schedule found", data={})
-
         data = []
         for list_schedule in list_schedules:
             list_schedule_data = list_schedule.serialize()
@@ -48,9 +45,7 @@ def get_schedule_by_counselor_id(counselor_id):
             UserDetails, ListSchedule.booked_by_account_id == UserDetails.account_id
         ).filter(ListSchedule.counselor_id == counselor_id).order_by(ListSchedule.available_from).all()
 
-        if not schedules:
-            return api_response(status_code=400, message="No schedule found", data={})
-
+        
         data = []
         for schedule in schedules:
             schedule_data = schedule.serialize()
@@ -298,3 +293,30 @@ def mark_schedule_as_done(counselor_id, schedule_id):
 
     finally:
         session.close()
+
+
+def mark_schedule_as_done_by_user(account_id, schedule_id, counselor_id):
+    session = Session()
+    try:
+        schedule_query = session.query(ListSchedule).filter(
+            ListSchedule.booked_by_account_id == account_id,
+            ListSchedule.schedule_id == schedule_id,
+            ListSchedule.counselor_id == counselor_id
+        ).first()
+
+        if not schedule_query:
+            return api_response(status_code=404, message="Schedule not found", data={})
+
+        schedule_query.status = "DONE"
+        session.commit()
+
+        return api_response(status_code=200, message="Schedule status updated to DONE", data=schedule_query.serialize())
+
+    except Exception as e:
+        session.rollback()
+        return api_response(status_code=500, message=f"Server error: {e}", data={})
+
+    finally:
+        session.close()
+
+    

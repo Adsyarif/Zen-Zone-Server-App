@@ -9,7 +9,8 @@ from app.controler.list_schedule_controller import (
     put_update_status_by_counselor_id , 
     delete_schedule_by_counselor_id,
     get_schedule_by_booked_by_account_id,
-    mark_schedule_as_done
+    mark_schedule_as_done,
+    mark_schedule_as_done_by_user
     )
 
 list_scedule_routes = Blueprint('list_schedule', __name__)
@@ -24,3 +25,4 @@ list_scedule_routes.route("/list_schedule/counselor/delete/<int:counselor_id>/<i
 
 list_scedule_routes.route("/list_schedule/user/<int:booked_by_account_id>", methods=["GET"])(get_schedule_by_booked_by_account_id)
 list_scedule_routes.route("/list_schedule/status/<int:counselor_id>/<int:schedule_id>", methods=["PUT"])(mark_schedule_as_done)
+list_scedule_routes.route("/list_schedule/status/<int:account_id>/<int:schedule_id>/<int:counselor_id>", methods=["PUT"])(mark_schedule_as_done_by_user)
