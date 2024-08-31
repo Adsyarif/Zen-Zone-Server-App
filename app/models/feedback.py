@@ -10,6 +10,7 @@ class Feedback(Base):
 
     feedback_id = mapped_column(Integer, primary_key=True, autoincrement=True)
     account_id = mapped_column(Integer, ForeignKey('account.account_id', ondelete="CASCADE"))
+    username = mapped_column(String, nullable=False)
     description = mapped_column(String)
     rating = mapped_column(Float)
     created_at = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -20,6 +21,7 @@ class Feedback(Base):
         data = {
             'feedback_id': self.feedback_id,
             'account_id': self.account_id, 
+            'username': self.username, 
             'description': self.description,
             'rating': self.rating,
             'created_at': self.created_at.astimezone(JAKARTA_TZ).strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None
